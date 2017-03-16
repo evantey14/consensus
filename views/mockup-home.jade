@@ -1,0 +1,24 @@
+extends layout
+
+block content
+
+  h1.large.centered.header.ui Welcome To Consensus
+  
+  button.ui.basic.button(style="display: flex;justify-content:center;align-items:center;margin: 0 auto;text-align: center;")#home-button    
+    | Begin your class now
+  
+  .ui.modal#create-modal
+    i.close.icon
+    .content
+      h2.medium.centered.header.ui
+        | Your room has been created
+      a(href = "/mockup/student")
+        button.ui.basic.button 
+          | Student Link
+      a(href = "/mockup/admin")
+        button.ui.basic.button
+          | Admin Link
+  script.
+    $("#home-button").click(function(){
+      $("#create-modal").modal('show');
+    });
