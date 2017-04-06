@@ -1,0 +1,15 @@
+body{
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+section.ui.container{
+  padding-top:5rem;
+}
+
+button.ui.centered.button {
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  margin: 0 auto;
+  text-align: center;
+}
