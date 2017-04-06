@@ -1,32 +1,21 @@
-.color.white{
-  color: #ffffff;
-}
-.color.neutral{
-  color: #F3F3F3;
-}
-.color.ashen{
-  color: #DADADA;
-}
-.color.dark{
-  color: #95989A;
-}
-.color.bluu{
-  color: #D0E6E3;
-}
-.color.green{
-  color: #C7D8C6;
-}
-
-.ask-aq{
-  margin: calc(2rem - .14285em) 0 1rem;
-}
-
 body{
   font-family: 'Source Sans Pro', sans-serif;
 }
 
+p{
+  color: #95989A;
+}
+
 section.ui.container{
-  padding-top:5rem;
+  padding-top:8rem;
+}
+
+a{
+  color: #95989A;
+}
+
+a:hover{
+  color: #A5E2E3;
 }
 
 button.ui.centered.button {
@@ -36,3 +25,59 @@ button.ui.centered.button {
   margin: 0 auto;
   text-align: center;
 }
+
+button.ui.basic.button.bgd.neutral{
+  background-color: #F3F3F3!important;
+}
+
+.vert-margin{
+  margin: .5em 0;
+}
+
+.vert-margin.large{
+  margin: 2em 0;
+}
+
+.right{
+  float: right;
+}
+
+/*********************
+    COLOR FRENZY
+*********************/
+  .color.white{
+    color: #ffffff;
+  }
+  .color.neutral{
+    color: #F3F3F3;
+  }
+  .color.ashen{
+    color: #DADADA;
+  }
+  .color.dark{
+    color: #95989A;
+  }
+  .color.bluu{
+    color: #A5E2E3;
+  }
+  .color.green{
+    color: #C7D8C6;
+  }
+  .bgd.white{
+    background-color: #ffffff;
+  }
+  .bgd.neutral{
+    background-color: #F3F3F3;
+  }
+  .bgd.ashen{
+    background-color: #DADADA;
+  }
+  .bgd.dark{
+    background-color: #95989A;
+  }
+  .bgd.bluu{
+    background-color: #D0E6E3;
+  }
+  .bgd.green{
+    background-color: #C7D8C6;
+  }
