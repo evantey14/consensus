@@ -1,5 +1,16 @@
 extends layout
 
 block content
-  h1.ui.large.centered.header
-    | Empty Because didn't redesign
+    h1.ui.large.header
+      |session name
+    .twelve.wide.column
+        a(href = "/mockup")
+          button.ui.basic.button#confused
+            | I feel confused
+        button.ui.basic.button#not-confused
+          | close confusion
+        .ask-aq
+          h2 what are you confused about?
+    .four.wide.column
+
+script(src="/javascripts/student.js")

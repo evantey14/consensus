@@ -1,0 +1,22 @@
+.color.white{
+  color: #ffffff;
+}
+.color.neutral{
+  color: #F3F3F3;
+}
+.color.ashen{
+  color: #DADADA;
+}
+.color.dark{
+  color: #95989A;
+}
+.color.bluu{
+  color: #D0E6E3;
+}
+.color.green{
+  color: #C7D8C6;
+}
+
+.ask-aq{
+  margin: calc(2rem - .14285em) 0 1rem;
+}
