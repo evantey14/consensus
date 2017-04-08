@@ -36,7 +36,12 @@ button.ui.basic.button.bgd.neutral {
 .right {
   float: right; }
 
-.display-on {
+/*********************
+    STUDENT STYLES
+*********************/
+#not-confused {
   display: none; }
+  #not-confused.toggled {
+    display: inline-block; }
 
 /*# sourceMappingURL=style.css.map */

@@ -1,40 +1,40 @@
 extends layout
 
 block content
-    h1.ui.large.header
-      |session name
-    .ui.grid
-      .ten.wide.column
-          button.ui.basic.button#confused
-              | I feel confused
-          button.ui.basic.button#not-confused
-            | close confusion
-          
-          h2 what are you confused about?
-          button.ui.basic.button#show-ask-options
-            | ask a question
-          
-          .ui.form.vert-margin#ask-options
-            .field
-              textarea(id="the-question", placeholder="let us know in 250 characters", rows=4)
-              .vert-margin.right
-                button.ui.basic.button#ask-question
-                  | ask question
-                button.ui.basic.button.bgd.neutral#close-ask-options
-                  | hide this feature
-          
-      .six.wide.column
-        #the-confused
-          p 10 other people are also confused
-        #the-asks.vert-margin.large
-          a(style="padding: 0 1em 0 0")
-            | top asks
-          a
-            | recently asked
-          a.right
-            | hide
-          .top-asks.vert-margin
-            p what a question
+  h1.ui.large.header
+    |session name
+  .ui.grid
+    .ten.wide.column
+        button.ui.basic.button#confused(onclick="amConfuse()")
+          | I feel confused
+        button.ui.basic.button#not-confused(onclick="notConfuse()")
+          | close confusion
+        
+        h2 what are you confused about?
+        button.ui.basic.button#show-ask-options
+          | ask a question
+        
+        .ui.form.vert-margin#ask-options
+          .field
+            textarea(id="the-question", placeholder="let us know in 250 characters", rows=4)
+            .vert-margin.right
+              button.ui.basic.button#ask-question
+                | ask question
+              button.ui.basic.button.bgd.neutral#close-ask-options
+                | hide this feature
+        
+    .six.wide.column
+      #the-confused
+        p 10 other people are also confused
+      #the-asks.vert-margin.large
+        a(style="padding: 0 1em 0 0")
+          | top asks
+        a
+          | recently asked
+        a.right
+          | hide
+        .top-asks.vert-margin
+          p what a question
 
-    script(src="https://cdn.socket.io/socket.io-1.7.3.js")
-    script(src="/javascripts/student.js")
+  script(src="/javascripts/student.js")
+  script(src="https://cdn.socket.io/socket.io-1.7.3.js")
