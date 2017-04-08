@@ -31,13 +31,27 @@ $(document).ready(function(){
 	});
 });
 
+
+
 function amConfuse() {
   console.log("Clicked");
   $("#confused").toggleClass("disabled");
   $("#not-confused").toggleClass("toggled");
+  $("#confused-options").toggleClass("toggled");
 }
 
 function notConfuse() {
   $("#confused").toggleClass("disabled");
   $("#not-confused").toggleClass("toggled");
+  $("#confused-options").toggleClass("toggled");
+}
+
+function qOptions() {
+  $("#ask-options").toggleClass("toggled");
+  $("#show-ask-options").toggleClass("toggled");
+}
+
+function cOptions() {
+  $("#ask-options").toggleClass("toggled");
+  $("#show-ask-options").toggleClass("toggled");
 }

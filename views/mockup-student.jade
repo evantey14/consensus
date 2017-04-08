@@ -10,18 +10,19 @@ block content
         button.ui.basic.button#not-confused(onclick="notConfuse()")
           | close confusion
         
-        h2 what are you confused about?
-        button.ui.basic.button#show-ask-options
-          | ask a question
-        
-        .ui.form.vert-margin#ask-options
-          .field
-            textarea(id="the-question", placeholder="let us know in 250 characters", rows=4)
-            .vert-margin.right
-              button.ui.basic.button#ask-question
-                | ask question
-              button.ui.basic.button.bgd.neutral#close-ask-options
-                | hide this feature
+        .ui#confused-options(style="margin-top:2em;")
+          h2 what are you confused about?
+          button.ui.basic.button#show-ask-options(onclick="qOptions()")
+            | ask a question
+          
+          .ui.form.vert-margin#ask-options
+            .field
+              textarea(id="the-question", placeholder="let us know in 250 characters", rows=4)
+              .vert-margin.right
+                button.ui.basic.button#ask-question
+                  | ask question
+                button.ui.basic.button.bgd.neutral#close-ask-options(onclick="cOptions()")
+                  | hide this feature
         
     .six.wide.column
       #the-confused

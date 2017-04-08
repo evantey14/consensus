@@ -44,4 +44,17 @@ button.ui.basic.button.bgd.neutral {
   #not-confused.toggled {
     display: inline-block; }
 
+#confused-options {
+  display: none; }
+  #confused-options.toggled {
+    display: block; }
+
+#show-ask-options.toggled {
+  display: none; }
+
+#ask-options {
+  display: none; }
+  #ask-options.toggled {
+    display: block; }
+
 /*# sourceMappingURL=style.css.map */
