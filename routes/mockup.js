@@ -1,9 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-
-/* GET mockups. */
-
 router.get('/', function(req, res, next){
     res.render('mockup-home');
 });

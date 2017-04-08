@@ -1,4 +1,5 @@
 var express = require('express');
+var socketio = require('socket.io');
 var path = require('path');
 var logger = require('morgan');
 var favicon = require('serve-favicon');
@@ -9,8 +10,12 @@ var session = require('express-session');
 var routes = require('./routes/index');
 var mockup = require('./routes/mockup');
 
-var app = express();
+var Confusion = require('./models/confusion');
+var Question = require('./models/question');
 
+var app = express();
+var io = socketio();
+app.io = io;
 
 //Mongoose setup
 console.log("APP.JS");
@@ -85,5 +90,39 @@ app.use(function(err, req, res, next) {
   });
 });
 
+
+io.on('connection', function(socket) {
+	console.log("New Connection: " + socket);
+	var id = Math.floor(Math.random() * 1000000);
+		
+	socket.on('confused', function() {
+		Confusion.create({'session_id' : id}, function(err, confusion) { // for now, init end_time to the same as start
+			if (err) console.log(err);
+  			else console.log("New confusion session: " + id);
+		});
+		// TODO: emit to admin	
+	});
+	
+	socket.on('notconfused', function() {
+		Confusion.findOne({'session_id' : id}, function(err, confusion) {
+			if (err) console.log(err);
+			else {
+				confusion.end_time = new Date();
+				confusion.save();
+			}
+		});	
+		//emit to admin
+	});
+	
+	socket.on('question', function(question) {
+		// create db object
+		console.log(question);
+		io.emit('new question', question);	
+	});
+
+	socket.on('disconnect', function() {
+		// TODO: close any open confusion session
+	});
+});
 
 module.exports = app;
