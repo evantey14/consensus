@@ -9,6 +9,7 @@ $bluu: #A5E2E3;
 $green: #C7D8C6;
 
 
+
 /*********************
       MAIN STYLES
 *********************/
@@ -56,6 +57,18 @@ button.ui.basic.button.bgd.neutral{
   float: right;
 }
 
-.display-on{
+
+
+/*********************
+    STUDENT STYLES
+*********************/
+#not-confused{
   display: none;
+  &.toggled{
+    display: inline-block;
+  }
+}
+
+#ask-options{
+  //
 }
