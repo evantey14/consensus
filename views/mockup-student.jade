@@ -5,8 +5,7 @@ block content
       |session name
     .ui.grid
       .ten.wide.column
-          a(href = "/mockup")
-            button.ui.basic.button#confused
+          button.ui.basic.button#confused
               | I feel confused
           button.ui.basic.button#not-confused
             | close confusion
@@ -37,4 +36,5 @@ block content
           .top-asks.vert-margin
             p what a question
 
-script(src="/javascripts/student.js")
+    script(src="https://cdn.socket.io/socket.io-1.7.3.js")
+    script(src="/javascripts/student.js")
