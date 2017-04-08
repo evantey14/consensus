@@ -26,7 +26,7 @@ $(document).ready(function(){
 	var questions = [];
 	
 	socket.on('new question', function(q) {
-		questions.append(q);
+		questions.push(q);
 		console.log(questions);		
 	});
  

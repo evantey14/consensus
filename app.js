@@ -18,18 +18,18 @@ var io = socketio();
 app.io = io;
 
 //Mongoose setup
-console.log("APP.JS");
+console.log('APP.JS');
 var mongoose = require('mongoose');
 var DB_URI = process.env.CONS_URI || 'mongodb://localhost:27017/consensus';
 
 console.log(DB_URI);
 
 db = mongoose.connect(DB_URI);
-console.log("connected to DB");
+console.log('connected to DB');
 
 var RedisStore = require('connect-redis')(session);
-SESSION_SECRET = process.env.SESSION_SECRET || "secret";
-REDIS_URL      = process.env.REDIS_URL      || "redis://localhost:6379";
+SESSION_SECRET = process.env.SESSION_SECRET || 'secret';
+REDIS_URL      = process.env.REDIS_URL      || 'redis://localhost:6379';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -52,7 +52,7 @@ app.use(session({
                 saveUninitialized: true
                 }));
 
-console.log("connected to redis");
+console.log('connected to redis');
 
 app.use('/', routes);
 app.use('/mockup', mockup);
@@ -92,13 +92,13 @@ app.use(function(err, req, res, next) {
 
 
 io.on('connection', function(socket) {
-	console.log("New Connection: " + socket);
+	console.log('New Connection: ' + socket);
 	var id = Math.floor(Math.random() * 1000000);
 		
 	socket.on('confused', function() {
 		Confusion.create({'session_id' : id}, function(err, confusion) { // for now, init end_time to the same as start
 			if (err) console.log(err);
-  			else console.log("New confusion session: " + id);
+  			else console.log('New confusion session: ' + id);
 		});
 		// TODO: emit to admin	
 	});
@@ -111,12 +111,15 @@ io.on('connection', function(socket) {
 				confusion.save();
 			}
 		});	
-		//emit to admin
+		// TODO: emit to admin
 	});
 	
 	socket.on('question', function(question) {
-		// create db object
-		console.log(question);
+		// TODO: strip question of whitespace and filter
+		Question.create({'question' : question}, function(err, question) {
+			if (err) console.log(err);
+			else console.log('New Question: ' + question.question);
+		});
 		io.emit('new question', question);	
 	});
 
