@@ -94,7 +94,15 @@ app.use(function(err, req, res, next) {
 io.on('connection', function(socket) {
 	console.log('New Connection: ' + socket);
 	var id = Math.floor(Math.random() * 1000000);
-		
+
+	// On connection, send users list of existing questions
+	Question.find({}, function(err, questions) {
+		for (var i = 0; i<questions.length; i++) {
+			socket.emit('new question', questions[i].question);
+		}	
+	});
+
+	// When confused, create new confusion object in db	
 	socket.on('confused', function() {
 		Confusion.create({'session_id' : id}, function(err, confusion) { // for now, init end_time to the same as start
 			if (err) console.log(err);
@@ -103,6 +111,7 @@ io.on('connection', function(socket) {
 		// TODO: emit to admin	
 	});
 	
+	// When not confused anymore, update confusion object with end time
 	socket.on('notconfused', function() {
 		Confusion.findOne({'session_id' : id}, function(err, confusion) {
 			if (err) console.log(err);
@@ -113,14 +122,15 @@ io.on('connection', function(socket) {
 		});	
 		// TODO: emit to admin
 	});
-	
+
+	// When asks a question, create new question object in db, and send to all users	
 	socket.on('question', function(question) {
 		// TODO: strip question of whitespace and filter
-		Question.create({'question' : question}, function(err, question) {
+		Question.create({'question' : question, 'votes' : 0}, function(err, question) {
 			if (err) console.log(err);
 			else console.log('New Question: ' + question.question);
 		});
-		io.emit('new question', question);	
+		io.sockets.emit('new question', question);
 	});
 
 	socket.on('disconnect', function() {
