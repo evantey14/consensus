@@ -5,7 +5,7 @@
       MAIN STYLES
 *********************/
 body {
-  font-family: 'Source Sans Pro', sans-serif; }
+  font-family: "Source Sans Pro", sans-serif; }
 
 p {
   color: #95989A; }
@@ -24,9 +24,19 @@ button.ui.centered.button {
   align-items: center;
   margin: 0 auto;
   text-align: center; }
-
-button.ui.basic.button.bgd.neutral {
+button.ui.basic.button.neutral {
   background-color: #F3F3F3 !important; }
+button.ui.basic.button.text {
+  padding: 0em;
+  font-family: "Source Sans Pro", sans-serif;
+  color: #95989A !important;
+  border: 0 none #ffffff;
+  box-shadow: none;
+  background-color: #ffffff !important; }
+  button.ui.basic.button.text:hover {
+    color: #A5E2E3 !important; }
+  button.ui.basic.button.text.selected {
+    font-weight: bold; }
 
 .vert-margin {
   margin: .5em 0; }
@@ -55,6 +65,16 @@ button.ui.basic.button.bgd.neutral {
 #ask-options {
   display: none; }
   #ask-options.toggled {
+    display: block; }
+
+#the-confused {
+  display: none; }
+  #the-confused.toggled {
+    display: block; }
+
+#asks {
+  display: none; }
+  #asks.toggled {
     display: block; }
 
 /*# sourceMappingURL=style.css.map */

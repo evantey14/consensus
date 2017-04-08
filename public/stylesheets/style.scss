@@ -7,6 +7,7 @@ $ashen: #DADADA;
 $dark: #95989A;
 $bluu: #A5E2E3;
 $green: #C7D8C6;
+$font: 'Source Sans Pro', sans-serif;
 
 
 
@@ -15,7 +16,7 @@ $green: #C7D8C6;
 *********************/
 
 body{
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: $font;
 }
 
 p{
@@ -33,16 +34,31 @@ a{
   }
 }
 
-button.ui.centered.button {
-  display: flex;
-  justify-content:center;
-  align-items:center;
-  margin: 0 auto;
-  text-align: center;
-}
-
-button.ui.basic.button.bgd.neutral{
-  background-color: $neutral!important;
+button.ui{
+  &.centered.button {
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    margin: 0 auto;
+    text-align: center;
+  }
+  &.basic.button.neutral{
+    background-color: $neutral!important;
+  }
+  &.basic.button.text{
+    padding: 0em;
+    font-family: $font;
+    color: $dark!important;
+    border: 0 none $white;
+    box-shadow: none;
+    background-color: $white!important;
+    &:hover{
+      color: $bluu!important;
+    }
+    &.selected{
+      font-weight: bold;
+    }
+  }
 }
 
 .vert-margin{
@@ -83,6 +99,20 @@ button.ui.basic.button.bgd.neutral{
 }
 
 #ask-options{
+  display: none;
+  &.toggled{
+    display: block;
+  }
+}
+
+#the-confused{
+  display: none;
+  &.toggled{
+    display: block;
+  }
+}
+
+#asks{
   display: none;
   &.toggled{
     display: block;

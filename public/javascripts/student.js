@@ -38,20 +38,44 @@ function amConfuse() {
   $("#confused").toggleClass("disabled");
   $("#not-confused").toggleClass("toggled");
   $("#confused-options").toggleClass("toggled");
+  $("#the-confused").toggleClass("toggled");
 }
 
 function notConfuse() {
   $("#confused").toggleClass("disabled");
   $("#not-confused").toggleClass("toggled");
   $("#confused-options").toggleClass("toggled");
+  $("#the-confused").toggleClass("toggled");
+  if ($("#ask-options").hasClass("toggled")) {
+    $("#ask-options").removeClass("toggled");
+    $("#show-ask-options").removeClass("toggled");
+  };
 }
 
 function qOptions() {
-  $("#ask-options").toggleClass("toggled");
-  $("#show-ask-options").toggleClass("toggled");
+  $("#ask-options").addClass("toggled");
+  $("#show-ask-options").addClass("toggled");
 }
 
 function cOptions() {
-  $("#ask-options").toggleClass("toggled");
-  $("#show-ask-options").toggleClass("toggled");
+  $("#ask-options").removeClass("toggled");
+  $("#show-ask-options").removeClass("toggled");
+}
+
+function topAsks() {
+  $("#top-asks").addClass("selected");
+  $("#recent-asks").removeClass("selected");
+  $("#asks").addClass("toggled");
+}
+
+function recAsks() {
+  $("#top-asks").removeClass("selected");
+  $("#recent-asks").addClass("selected");
+  $("#asks").addClass("toggled");
+}
+
+function hideAsks() {
+  $("#top-asks").removeClass("selected");
+  $("#recent-asks").removeClass("selected");
+  $("#asks").removeClass("toggled");
 }
