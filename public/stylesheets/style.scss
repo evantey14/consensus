@@ -1,0 +1,61 @@
+/*********************
+      VARIABLES
+*********************/
+$white: #ffffff;
+$neutral: #F3F3F3;
+$ashen: #DADADA;
+$dark: #95989A;
+$bluu: #A5E2E3;
+$green: #C7D8C6;
+
+
+/*********************
+      MAIN STYLES
+*********************/
+
+body{
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+p{
+  color: $dark;
+}
+
+section.ui.container{
+  padding-top:8rem;
+}
+
+a{
+  color: $dark;
+  &:hover{
+    color: $bluu;
+  }
+}
+
+button.ui.centered.button {
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  margin: 0 auto;
+  text-align: center;
+}
+
+button.ui.basic.button.bgd.neutral{
+  background-color: $neutral!important;
+}
+
+.vert-margin{
+  margin: .5em 0;
+
+  &.large{
+    margin: 2em 0;
+  }
+}
+
+.right{
+  float: right;
+}
+
+.display-on{
+  display: none;
+}
