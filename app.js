@@ -27,10 +27,6 @@ console.log(DB_URI);
 db = mongoose.connect(DB_URI);
 console.log('connected to DB');
 
-var RedisStore = require('connect-redis')(session);
-SESSION_SECRET = process.env.SESSION_SECRET || 'secret';
-REDIS_URL      = process.env.REDIS_URL      || 'redis://localhost:6379';
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -42,17 +38,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use(session({
-                secret: SESSION_SECRET,
-                store: new RedisStore({
-                  url: REDIS_URL
-                }),
-                resave: false,
-                saveUninitialized: true
-                }));
-
-console.log('connected to redis');
 
 app.use('/', routes);
 app.use('/mockup', mockup);
