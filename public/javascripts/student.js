@@ -1,4 +1,5 @@
 $(document).ready(function(){
+  var num_confused = 0;
 	var $confused = $('#confused');
 	var $notconfused = $('#not-confused');
 
@@ -7,11 +8,16 @@ $(document).ready(function(){
 	// TODO: we should keep some state variable so people can't repeatedly click 'confused' and send more messages
 	$confused.click(function() {
 		socket.emit('confused');
-		// TODO: change to confused screen
+
+    $("#confused").toggleClass("disabled");
+    $("#not-confused").toggleClass("toggled");
 	});
+
 	$notconfused.click(function() {
-		socket.emit('notconfused');
-		// TODO: move to not-confused screen
+		socket.emit('not_confused');
+
+    $("#confused").toggleClass("disabled");
+    $("#not-confused").toggleClass("toggled");
 	});
 
 	var $submitquestion = $('#ask-question');
@@ -27,17 +33,12 @@ $(document).ready(function(){
 
 	socket.on('new question', function(q) {
 		questions.push(q);
-		console.log(questions);		
+		console.log(questions);
 	});
+
+  socket.on('update_confused', function(change){
+    console.log("Confusion change");
+    num_confused += change;
+    $("#the-confused").text("" + num_confused + " people are also confused");
+  })
 });
-
-function amConfuse() {
-  console.log("Clicked");
-  $("#confused").toggleClass("disabled");
-  $("#not-confused").toggleClass("toggled");
-}
-
-function notConfuse() {
-  $("#confused").toggleClass("disabled");
-  $("#not-confused").toggleClass("toggled");
-}

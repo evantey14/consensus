@@ -5,9 +5,9 @@ block content
     |session name
   .ui.grid
     .ten.wide.column
-        button.ui.basic.button#confused(onclick="amConfuse()")
+        button.ui.basic.button#confused
           | I feel confused
-        button.ui.basic.button#not-confused(onclick="notConfuse()")
+        button.ui.basic.button#not-confused
           | close confusion
         
         h2 what are you confused about?
@@ -24,8 +24,7 @@ block content
                 | hide this feature
         
     .six.wide.column
-      #the-confused
-        p 10 other people are also confused
+      p#the-confused 10 other people are also confused
       #the-asks.vert-margin.large
         a(style="padding: 0 1em 0 0")
           | top asks
