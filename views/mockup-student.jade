@@ -5,27 +5,26 @@ block content
     |session name
   .ui.grid
     .ten.wide.column
-        button.ui.basic.button#confused(onclick="amConfuse()")
+        button.ui.basic.button#confused
           | I feel confused
-        button.ui.basic.button#not-confused(onclick="notConfuse()")
+        button.ui.basic.button#not-confused
           | close confusion
+        #confusion-help
+          h2 what are you confused about?
+          button.ui.basic.button#show-ask-options
+            | ask a question
+          
+          .ui.form.vert-margin#ask-options
+            .field
+              textarea(id="the-question", placeholder="let us know in 250 characters", rows=4)
+              .vert-margin.right
+                button.ui.basic.button#ask-question
+                  | ask a question
+                button.ui.basic.button.bgd.neutral#close-ask-options
+                  | hide this feature
         
-        h2 what are you confused about?
-        button.ui.basic.button#show-ask-options
-          | ask a question
-        
-        .ui.form.vert-margin#ask-options
-          .field
-            textarea(id="the-question", placeholder="let us know in 250 characters", rows=4)
-            .vert-margin.right
-              button.ui.basic.button#ask-question
-                | ask question
-              button.ui.basic.button.bgd.neutral#close-ask-options
-                | hide this feature
-        
-    .six.wide.column
-      #the-confused
-        p 10 other people are also confused
+    .six.wide.column#confusion-info
+      p#the-confused 10 other people are also confused
       #the-asks.vert-margin.large
         a(style="padding: 0 1em 0 0")
           | top asks

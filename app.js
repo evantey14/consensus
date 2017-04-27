@@ -84,21 +84,23 @@ io.on('connection', function(socket) {
 	Question.find({}, function(err, questions) {
 		for (var i = 0; i<questions.length; i++) {
 			socket.emit('new question', questions[i].question);
-		}	
+		}
 	});
 
-	// When confused, create new confusion object in db	
+	// When confused, create new confusion object in db
 	socket.on('confused', function() {
 		Confusion.create({'user_id' : id}, function(err, confusion) { // for now, init end_time to the same as start
 			if (err) console.log(err);
   			else console.log('New confusion session: ' + id);
 		});
-		// TODO: emit to admin	
+		// TODO: emit to admin
+    socket.emit('update_confused', 1);
 	});
-	
+
 	// When not confused anymore, update confusion object with end time
 	socket.on('notconfused', function() {
 		Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
+
 			if (err) console.log(err);
 			if (confusion === null) return;
 			else {
@@ -106,11 +108,12 @@ io.on('connection', function(socket) {
 				confusion.save();
 				console.log("End confusion session: " + id)
 			}
-		});	
+		});
 		// TODO: emit to admin
+    socket.emit('update_confused', -1);
 	});
 
-	// When asks a question, create new question object in db, and send to all users	
+	// When asks a question, create new question object in db, and send to all users
 	socket.on('question', function(question) {
 		// TODO: strip question of whitespace and filter
 		Question.create({'question' : question, 'votes' : 0}, function(err, question) {
