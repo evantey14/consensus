@@ -115,12 +115,17 @@ io.on('connection', function(socket) {
 
 	// When asks a question, create new question object in db, and send to all users
 	socket.on('question', function(question) {
-		// TODO: strip question of whitespace and filter
-		Question.create({'question' : question, 'votes' : 0}, function(err, question) {
+		Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
 			if (err) console.log(err);
-			else console.log('New Question: ' + question.question);
+			else {
+		// TODO: strip question of whitespace and filter
+				Question.create({'question' : question, 'votes' : 0}, function(err, question) {
+					if (err) console.log(err);
+					else console.log('New Question: ' + question.question);
+				});
+				io.sockets.emit('new question', question);
+			}
 		});
-		io.sockets.emit('new question', question);
 	});
 
 	socket.on('disconnect', function() {
