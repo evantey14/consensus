@@ -8,7 +8,7 @@ $(document).ready(function(){
 	var socket = io.connect('http://localhost:3000');
   $("#confusion-help").hide();
   $("#confusion-info").hide();
-  
+
 	// TODO: we should keep some state variable so people can't repeatedly click 'confused' and send more messages
 	$confused.click(function() {
 		socket.emit('confused');
@@ -16,6 +16,7 @@ $(document).ready(function(){
     $("#confused").toggleClass("disabled");
     $("#not-confused").toggleClass("toggled");
     $("#confusion-help").show();
+    $("#show-ask-options").show();
     $("#ask-options").hide();
     $("#confusion-info").show();
 	});
