@@ -2,15 +2,22 @@ $(document).ready(function(){
   var num_confused = 0;
 	var $confused = $('#confused');
 	var $notconfused = $('#not-confused');
+  var $askbutton = $('#show-ask-options');
+  var $closeask = $('#close-ask-options');
 
 	var socket = io.connect('http://localhost:3000');
-
+  $("#confusion-help").hide();
+  $("#confusion-info").hide();
+  
 	// TODO: we should keep some state variable so people can't repeatedly click 'confused' and send more messages
 	$confused.click(function() {
 		socket.emit('confused');
 
     $("#confused").toggleClass("disabled");
     $("#not-confused").toggleClass("toggled");
+    $("#confusion-help").show();
+    $("#ask-options").hide();
+    $("#confusion-info").show();
 	});
 
 	$notconfused.click(function() {
@@ -18,7 +25,20 @@ $(document).ready(function(){
 
     $("#confused").toggleClass("disabled");
     $("#not-confused").toggleClass("toggled");
+    $("#confusion-help").hide();
+    $("#confusion-info").hide();
 	});
+
+  $askbutton.click(function(){
+    $("#ask-options").show();
+    $askbutton.hide();
+  });
+
+  $closeask.click(function(){
+    $("#ask-options").hide();
+    $askbutton.show();
+  })
+
 
 	var $submitquestion = $('#ask-question');
 	var $question = $('#the-question');
@@ -39,6 +59,12 @@ $(document).ready(function(){
   socket.on('update_confused', function(change){
     console.log("Confusion change");
     num_confused += change;
-    $("#the-confused").text("" + num_confused + " people are also confused");
+    if(num_confused == 0){
+      $("#the-confused").text("No one is confused right now :)");
+    }else if (num_confused == 1){
+      $("#the-confused").text("One person is confused right now");
+    }else{
+      $("#the-confused").text("" + num_confused + " people are confused");
+    }
   })
 });

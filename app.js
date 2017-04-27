@@ -107,6 +107,7 @@ io.on('connection', function(socket) {
 			}
 		});
 		// TODO: emit to admin
+    socket.emit('update_confused', -1);
 	});
 
 	// When asks a question, create new question object in db, and send to all users
