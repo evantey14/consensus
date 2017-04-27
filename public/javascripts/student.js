@@ -1,5 +1,7 @@
 $(document).ready(function(){
   var num_confused = 0;
+	var questions = [];
+
 	var $confused = $('#confused');
 	var $notconfused = $('#not-confused');
   var $askbutton = $('#show-ask-options');
@@ -49,11 +51,10 @@ $(document).ready(function(){
 		return false; // not sure why this is here
 	});
 
-	var questions = [];
-
 	socket.on('new question', function(q) {
 		questions.push(q);
 		console.log(questions);
+    update_questions();
 	});
 
   socket.on('update_confused', function(change){
@@ -66,5 +67,17 @@ $(document).ready(function(){
     }else{
       $("#the-confused").text("" + num_confused + " people are confused");
     }
-  })
+  });
+
+  update_questions = function(){
+    for(var i = 0; i < questions.length; i++){
+      if (i < 3){
+        var index = i+1;
+        $("#question-" + index).text("- " + questions[questions.length - 1 - i]);
+      }
+    }
+  };
+
+
+  update_questions();
 });
