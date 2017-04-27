@@ -1,5 +1,24 @@
 extends layout
 
 block content
-  h1.ui.large.centered.header
-    | Empty Because didn't redesign
+  .ui.grid
+    .row
+      .ten.wide.column
+        h1.ui.large.header
+          |[archived] session name
+      .six.wide.column
+        p(style="float: right;") session opened on april 1, 2017
+    .sixteen.wide.column(style="margin-bottom: 10px")
+      h2.ui.small.header
+        |confusion graph
+      .graph(style="width: auto; height: 20vh; background-color: #C7D8C6;")
+    .eight.wide.column
+      h2.ui.small.header
+        |top asks
+      .questions
+        p same?
+    .eight.wide.column
+      h2.ui.small.header
+        |recent asks
+      .questions
+        p wow?
