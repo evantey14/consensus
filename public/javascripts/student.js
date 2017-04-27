@@ -40,8 +40,7 @@ $(document).ready(function(){
   $closeask.click(function(){
     $("#ask-options").hide();
     $askbutton.show();
-  })
-
+  });
 
 	var $submitquestion = $('#ask-question');
 	var $question = $('#the-question');
