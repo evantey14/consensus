@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 
 var confusionSchema = mongoose.Schema({
-  session_id : Number,
+  user_id : Number,
   start_time : { type : Date, default : Date.now },
-  end_time : { type : Date, default : Date.now }
+  end_time : { type : Date, default : new Date(0)}
 });
 
 module.exports = mongoose.model('Confusion', confusionSchema);
