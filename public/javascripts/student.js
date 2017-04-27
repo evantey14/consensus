@@ -16,6 +16,7 @@ $(document).ready(function(){
     $("#confused").toggleClass("disabled");
     $("#not-confused").toggleClass("toggled");
     $("#confusion-help").show();
+    $("#show-ask-options").show();
     $("#ask-options").hide();
     $("#confusion-info").show();
 	});
