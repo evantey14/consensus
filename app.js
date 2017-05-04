@@ -114,13 +114,13 @@ io.on('connection', function(socket) {
 	});
 
 	// When asks a question, create new question object in db, and send to all users
-	socket.on('question', function(question) {
+	socket.on('question', function(question_string) {
 		// TODO: strip question of whitespace and filter
-		Question.create({'question' : question, 'votes' : 0}, function(err, question) {
+		Question.create({'question' : question_string, 'votes' : 0}, function(err, question) {
 			if (err) console.log(err);
 			else console.log('New Question: ' + question.question);
 		});
-		io.sockets.emit('new question', question);
+		io.sockets.emit('new question', question_string);
 	});
 
 	socket.on('disconnect', function() {
@@ -135,16 +135,16 @@ io.on('connection', function(socket) {
 		});
 	});
 
-	socket.on('vote_question', function(question) {
-		Question.findOne({'question' : question}, function(err, question) {
+	socket.on('vote_question', function(question_string) {
+		Question.findOne({'question' : question_string}, function(err, question) {
 			if (err) console.log(err);
 			if (question === null) return;
 			else {
 				question.vote = question.vote + 1;
 				console.log("voted");
 			}
-		}
-	}
+		});
+	});
 });
 
 module.exports = app;
