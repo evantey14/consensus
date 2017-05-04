@@ -134,6 +134,17 @@ io.on('connection', function(socket) {
 			}
 		});	
 	});
+
+	socket.on('vote_question', function(question) {
+		Question.findOne({'question' : question}, function(err, question) {
+			if (err) console.log(err);
+			if (question === null) return;
+			else {
+				question.vote = question.vote + 1;
+				console.log("voted");
+			}
+		}
+	}
 });
 
 module.exports = app;
