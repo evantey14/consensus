@@ -98,7 +98,7 @@ io.on('connection', function(socket) {
 	});
 
 	// When not confused anymore, update confusion object with end time
-	socket.on('notconfused', function() {
+	socket.on('not_confused', function() {
 		Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
 
 			if (err) console.log(err);
@@ -132,7 +132,7 @@ io.on('connection', function(socket) {
 				confusion.save();
 				console.log("End confusion session: " + id)
 			}
-		});	
+		});
 	});
 });
 
