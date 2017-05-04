@@ -58,10 +58,10 @@ if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     console.log(err);
     res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
+    // res.render('error', {
+    //   message: err.message,
+    //   error: err
+    // });
   });
 }
 
@@ -94,11 +94,11 @@ io.on('connection', function(socket) {
   			else console.log('New confusion session: ' + id);
 		});
 		// TODO: emit to admin
-    socket.emit('update_confused', 1);
+    io.sockets.emit('update_confused', 1);
 	});
 
 	// When not confused anymore, update confusion object with end time
-	socket.on('notconfused', function() {
+	socket.on('not_confused', function() {
 		Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
 
 			if (err) console.log(err);
@@ -110,7 +110,7 @@ io.on('connection', function(socket) {
 			}
 		});
 		// TODO: emit to admin
-    socket.emit('update_confused', -1);
+    io.sockets.emit('update_confused', -1);
 	});
 
 	// When asks a question, create new question object in db, and send to all users
@@ -132,7 +132,7 @@ io.on('connection', function(socket) {
 				confusion.save();
 				console.log("End confusion session: " + id)
 			}
-		});	
+		});
 	});
 
 	socket.on('vote_question', function(question) {
