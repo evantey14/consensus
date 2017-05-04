@@ -12,6 +12,7 @@ var mockup = require('./routes/mockup');
 
 var Confusion = require('./models/confusion');
 var Question = require('./models/question');
+var Room = require('../models/Room.js');
 
 var app = express();
 var io = socketio();
@@ -77,8 +78,14 @@ app.use(function(err, req, res, next) {
 
 
 io.on('connection', function(socket) {
+
 	var id = Math.floor(Math.random() * 1000000);
 	console.log('New Connected User: ' + id);
+
+  socket.on('initialize', function(name){
+    roomInfo = Room.upToSpeed(name);
+    socket.emit('initialize', roomInfo);
+  })
 
 	// On connection, send users list of existing questions
 	Question.find({}, function(err, questions) {
