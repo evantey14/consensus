@@ -94,7 +94,7 @@ io.on('connection', function(socket) {
   			else console.log('New confusion session: ' + id);
 		});
 		// TODO: emit to admin
-    socket.emit('update_confused', 1);
+    io.sockets.emit('update_confused', 1);
 	});
 
 	// When not confused anymore, update confusion object with end time
@@ -110,7 +110,7 @@ io.on('connection', function(socket) {
 			}
 		});
 		// TODO: emit to admin
-    socket.emit('update_confused', -1);
+    io.sockets.emit('update_confused', -1);
 	});
 
 	// When asks a question, create new question object in db, and send to all users
