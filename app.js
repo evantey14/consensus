@@ -17,6 +17,8 @@ var app = express();
 var io = socketio();
 app.io = io;
 
+var fs = require("fs");
+
 //Mongoose setup
 console.log('APP.JS');
 var mongoose = require('mongoose');
@@ -115,41 +117,31 @@ io.on('connection', function(socket) {
 
 	// When asks a question, create new question object in db, and send to all users
 	socket.on('question', function(question) {
-		Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
-			if (err) console.log(err);
-			else {
 		// TODO: strip question of whitespace and filter
-				function readTextFile(file)
-				{
-    				var rawFile = new XMLHttpRequest();
-    				rawFile.open("GET", file, false);
-    				rawFile.onreadystatechange = function ()
-    				{
-        				if(rawFile.readyState === 4)
-        				{
-            				if(rawFile.status === 200 || rawFile.status == 0)
-            				{
-                				var allText = rawFile.responseText;
-               					alert(allText);
-            				}
-        				}
-    				}
-   					rawFile.send(null);
-				}
-				Question.create({'question' : question, 'votes' : 0}, function(err, question) {
-					if (err) console.log(err);
-            		
-            		var filterWords = readTextFile("badwords.txt").split("/n")
-            		// "i" is to ignore case and "g" for global
-            		var rgx = new RegExp(filterWords.join(""), "gi");
-              		function WordFilter(str) {
-            			return str.replace(rgx, "****");
-            		}
-					else console.log('New Question: ' + WordFilter(question.question));
-				});
-				io.sockets.emit('new question', question);
+				
+		fs.readFile("./badwords.txt", 'utf8', function read(err, data) {
+			if (err) {
+				console.log('error');
+				return '****';
 			}
-		});
+			else {
+				var filterWords = data.split("\n");
+    			// "i" is to ignore case and "g" for global
+    			var rgx = new RegExp(filterWords.join("|"), "gi");
+   				function WordFilter(str) {
+						return str.replace(rgx, "****");
+   				}
+   				if (!WordFilter(question).includes("****")) {
+					Question.create({'question' : question, 'votes' : 0}, function(err, question) {
+						if (err) console.log(err);
+        				else {
+							console.log('New Question: ' + WordFilter(question.question));
+						}
+					});
+					io.sockets.emit('new question', question);
+				}
+			}
+		});	
 	});
 
 	socket.on('disconnect', function() {
