@@ -119,9 +119,33 @@ io.on('connection', function(socket) {
 			if (err) console.log(err);
 			else {
 		// TODO: strip question of whitespace and filter
+				function readTextFile(file)
+				{
+    				var rawFile = new XMLHttpRequest();
+    				rawFile.open("GET", file, false);
+    				rawFile.onreadystatechange = function ()
+    				{
+        				if(rawFile.readyState === 4)
+        				{
+            				if(rawFile.status === 200 || rawFile.status == 0)
+            				{
+                				var allText = rawFile.responseText;
+               					alert(allText);
+            				}
+        				}
+    				}
+   					rawFile.send(null);
+				}
 				Question.create({'question' : question, 'votes' : 0}, function(err, question) {
 					if (err) console.log(err);
-					else console.log('New Question: ' + question.question);
+            		
+            		var filterWords = readTextFile("badwords.txt").split("/n")
+            		// "i" is to ignore case and "g" for global
+            		var rgx = new RegExp(filterWords.join(""), "gi");
+              		function WordFilter(str) {
+            			return str.replace(rgx, "****");
+            		}
+					else console.log('New Question: ' + WordFilter(question.question));
 				});
 				io.sockets.emit('new question', question);
 			}
