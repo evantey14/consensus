@@ -1,0 +1,41 @@
+extends layout
+
+block content
+  h1.ui.large.header
+    | #{name}
+  .ui.grid
+    .ten.wide.column
+        button.ui.basic.button#confused
+          | I feel confused
+        button.ui.basic.button#not-confused
+          | close confusion
+        #confusion-help(style="margin-top: 1em;")
+          h2 what are you confused about?
+          button.ui.basic.button#show-ask-options
+            | ask a question
+          
+          .ui.form.vert-margin#ask-options
+            .field
+              textarea(id="the-question", placeholder="let us know in 250 characters", rows=4)
+              .vert-margin.right
+                button.ui.basic.button#ask-question
+                  | ask a question
+                button.ui.basic.button.bgd.neutral#close-ask-options
+                  | hide this feature
+        
+    .six.wide.column#confusion-info
+      p#the-confused 10 other people are also confused
+      #the-asks.vert-margin.large
+        a(style="padding: 0 1em 0 0")
+          | top asks
+        a
+          | recently asked
+        a.right
+          | hide
+        .top-asks.vert-margin
+          p#question-1 what a question
+          p#question-2 ayy 
+          p#question-3 lmao
+
+  script(src="/javascripts/student.js")
+  script(src="https://cdn.socket.io/socket.io-1.7.3.js")
