@@ -42,6 +42,14 @@ $(document).ready(function(){
     $askbutton.show();
   });
 
+  $('#hide-asks').click(function(){
+    $("#the-asks").hide();
+  });
+
+  $('#show-recent-asks').click(function(){
+    $("#the-asks").show();
+  });
+
 	var $submitquestion = $('#ask-question');
 	var $question = $('#the-question');
 
