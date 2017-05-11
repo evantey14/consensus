@@ -17,6 +17,8 @@ var app = express();
 var io = socketio();
 app.io = io;
 
+var fs = require("fs");
+
 //Mongoose setup
 console.log('APP.JS');
 var mongoose = require('mongoose');
@@ -116,11 +118,29 @@ io.on('connection', function(socket) {
 	// When asks a question, create new question object in db, and send to all users
 	socket.on('question', function(question_string) {
 		// TODO: strip question of whitespace and filter
-		Question.create({'question' : question_string, 'votes' : 0}, function(err, question) {
-			if (err) console.log(err);
-			else console.log('New Question: ' + question.question);
-		});
-		io.sockets.emit('new question', question_string);
+		fs.readFile("./badwords.txt", 'utf8', function read(err, data) {
+			if (err) {
+				console.log('error');
+				return '****';
+			}
+			else {
+				var filterWords = data.split("\n");
+    			// "i" is to ignore case and "g" for global
+    			var rgx = new RegExp(filterWords.join("|"), "gi");
+   				function WordFilter(str) {
+						return str.replace(rgx, "****");
+   				}
+   				if (!WordFilter(question).includes("****")) {
+					Question.create({'question' : question, 'votes' : 0}, function(err, question) {
+						if (err) console.log(err);
+        				else {
+							console.log('New Question: ' + WordFilter(question.question));
+						}
+					});
+					io.sockets.emit('new question', question);
+				}
+			}
+		});	
 	});
 
 	socket.on('disconnect', function() {
