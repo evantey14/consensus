@@ -56,7 +56,7 @@ $(document).ready(function(){
 	$questionform = $submitquestion.click(function(e) {
 		socket.emit('question', $question.val());
 		$question.val(' ');
-		return false; // not sure why this is here
+		return false;
 	});
 
 	socket.on('new question', function(q) {
@@ -85,6 +85,13 @@ $(document).ready(function(){
       }
     }
   };
+
+  $('.ui.modal').modal({blurring:true});
+
+  $('.question').click(function(el){
+    $("#question-modal").text($(this).text().substring(2));
+    $('.ui.modal.basic').modal('show');
+  });
 
 
   update_questions();
