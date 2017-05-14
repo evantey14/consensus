@@ -12,7 +12,7 @@ var mockup = require('./routes/mockup');
 
 var Confusion = require('./models/confusion');
 var Question = require('./models/question');
-var Room = require('../models/Room.js');
+var Room = require('./models/room.js');
 
 var app = express();
 var io = socketio();
