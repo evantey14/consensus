@@ -56,3 +56,12 @@ button.ui.basic.button.bgd.neutral{
 .right{
   float: right;
 }
+
+#the-asks{
+  .question{
+    cursor: pointer;
+  }
+  #question-2{
+    color: $ashen;
+  }
+}

@@ -44,4 +44,12 @@ button.ui.basic.button.bgd.neutral {
   #not-confused.toggled {
     display: inline-block; }
 
+#the-asks.question{
+    cursor: pointer; }
+  #question-2{
+    color: #5E5E5E; }
+  #question-3{
+    color: #DADADA; }
+
+
 /*# sourceMappingURL=style.css.map */
