@@ -17,9 +17,23 @@ roomSchema.methods.createRoom = function(name, cb){
     active    : false
   }
 
-  console.log("NEW ROOM CREATION: " + name);
-  console.log("ADMIN URL FOR " + name + ": " + room.admin_url);
-  this.create(room, cb);
+  this.findOne({name: name}, function(room){
+    if(room){
+      //Same room found with same name, don't make the room
+      return false;
+    } else {
+      console.log("NEW ROOM CREATION: " + name);
+      console.log("ADMIN URL FOR " + name + ": " + room.admin_url);
+      this.create(room, function(err){
+        if(err){
+          console.log(err);
+          return false;
+        }
+      });
+      return true;
+    }
+  });
+
 }
 
 roomSchema.methods.upToSpeed = function(name, cb){
@@ -29,8 +43,9 @@ roomSchema.methods.upToSpeed = function(name, cb){
     };
     if(!room){
       console.log("INVALID ROOM");
-      return;
+      return null;
     }
+    return room;
   });
 }
 
