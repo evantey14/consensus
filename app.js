@@ -8,7 +8,6 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 
 var routes = require('./routes/index');
-var mockup = require('./routes/mockup');
 
 var Confusion = require('./models/confusion');
 var Question = require('./models/question');
@@ -43,8 +42,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/mockup', mockup);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

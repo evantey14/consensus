@@ -14,7 +14,7 @@ var roomSchema = mongoose.Schema({
 roomSchema.statics.createRoom = function(name, cb){
   var room = new this({
     name      : name,
-    admin_url : Math.random().toString(36).slice(2),
+    admin_url : Math.random().toString(36).slice(12), //12 so easier to use for testing. Increase for production
     questions : [],
     confusion : 0,
     active    : false
@@ -39,11 +39,17 @@ roomSchema.statics.createRoom = function(name, cb){
   });
 }
 
-roomSchema.statics.upToSpeed = function(name, cb){
-  this.findOne({name: name},{questions: true, confusion: true, active: true}, function(room, err){
+roomSchema.statics.upToSpeed = function(user_type, room_identifier, cb){
+  var query = {};
+  if (user_type == "admin"){
+    query = {admin_url: room_identifier};
+  } else {
+    query = {name: room_identifier};
+  }
+  this.findOne(query, {questions: true, confusion: true, active: true}, function(room, err){
     if(err){
       return cb(err);
-    };
+    }
     if(!room){
       console.log("INVALID ROOM");
       return null;

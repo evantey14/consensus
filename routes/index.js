@@ -21,7 +21,7 @@ router.post('/create', function(req, res, next){
 
 router.get('/room/:roomName', function(req, res, next){
   var name = req.params.roomName;
-  Room.upToSpeed(name, function(room){
+  Room.upToSpeed("student", name, function(room){
     if(!room){
       res.render("no-room");
     }
@@ -40,4 +40,23 @@ router.get('/room/:roomName', function(req, res, next){
   });
 });
 
+router.get('/admin/:admin_url', function(req, res, next){
+  Room.upToSpeed("admin", req.params.admin_url, function(room){
+    if(!room){
+      res.render("no-room");
+    }
+  
+    if(!room.active){
+      res.render("ended-room", {name: room.name});
+    }
+
+    data = {
+      name      : room.name,
+      questions : room.questions,
+      confusion : room.confusion
+    }
+    
+    res.render("admin", data);
+  });
+});
 module.exports = router;
