@@ -8,15 +8,26 @@ $(document).ready(function(){
          "health", "calculus", "french", "spanish"];
 
   $("#home-button").click(function(){
+    // TODO: we should validate that these names are ok to use as student links
     var name = $("#room-name").val();
     var chosen = false;
     if(!name){
       name = generateName();
       chosen = true;
     }
-    if(chosen){
+    $.post("/create", {name: name}, function(resp){
+      if(resp == "DONE"){
+        $("#create-header").text(name + " has been created");
+        $("#create-modal").modal('show');
+      }else{
+        alert("Choose another name!");
+      }
+    });
+    // TODO: in we're generating a name, we should keep trying until it works (some code for this can be found below)
+    /*if(chosen){
       $.post("/create", {name: name}, function(resp){
         if(resp == "DONE"){
+          console.log(resp);
           $("#create-header").text(name + " has been created");
           $("#create-modal").modal('show');
         }else{
@@ -35,7 +46,7 @@ $(document).ready(function(){
             }
           });
       }
-    }
+    }*/
   });
 
   generateName = function(){

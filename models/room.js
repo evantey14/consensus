@@ -12,31 +12,31 @@ var roomSchema = mongoose.Schema({
 });
 
 roomSchema.statics.createRoom = function(name, cb){
-  room = {
+  var room = new this({
     name      : name,
     admin_url : Math.random().toString(36).slice(2),
     questions : [],
     confusion : 0,
     active    : false
-  }
+  });
 
-  this.findOne({name: name}, function(room){
-    if(room){
+  this.findOne({name: name}, function(existing_room){
+    if(existing_room){
       //Same room found with same name, don't make the room
-      return false;
+      cb(false);
     } else {
       console.log("NEW ROOM CREATION: " + name);
       console.log("ADMIN URL FOR " + name + ": " + room.admin_url);
-      this.create(room, function(err){
+      room.save(function(err){
         if(err){
           console.log(err);
-          return false;
-        }
+          cb(false);
+        } else {
+	  cb(true);
+	}
       });
-      return true;
     }
   });
-
 }
 
 roomSchema.statics.upToSpeed = function(name, cb){
@@ -55,7 +55,7 @@ roomSchema.statics.upToSpeed = function(name, cb){
 roomSchema.methods.updateConfusion = function(change, cb){
   last_conf = this.confusion[this.confusion.length - 1];
   new_conf = {
-    conf_number : last_conf.conf_number + change.
+    conf_number : last_conf.conf_number + change,
     timestamp   : Date.now
   }
   this.confusion_time.push(new_conf);
