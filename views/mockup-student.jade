@@ -37,16 +37,16 @@ block content
           p#question-2.question ayy 
           p#question-3.question lmao
           
-    .ui.basic.modal(style="min-width: 350px; width: 30%; margin-left: -200px;")
-      .header#question-modal(style="padding-left:0; border:none;")
-        | question
-      .description(style="font-style:italics; border:none;")
-        | lookee a question
-      .actions(style="border:none;")
-        .ui.button.green.inverted.ok
-          | upvote
-        .ui.button.basic.cancel.inverted.red
-          | close
+  .ui.basic.modal(style="min-width: 350px; width: 30%; margin-left: -200px;")
+    .header#question-in-modal(style="padding-left:0; border:none;")
+      | question
+    .description(style="font-style:italics; border:none;")
+      | lookee a question
+    .actions(style="border:none;")
+      .ui.button.green.inverted.ok
+        | upvote
+      .ui.button.basic.cancel.inverted.red
+        | close
 
   script(src="/javascripts/student.js")
   script(src="https://cdn.socket.io/socket.io-1.7.3.js")
