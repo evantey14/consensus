@@ -121,23 +121,23 @@ io.on('connection', function(socket) {
 		fs.readFile("./badwords.txt", 'utf8', function read(err, data) {
 			if (err) {
 				console.log('error');
-				return '****';
 			}
 			else {
-				var filterWords = data.split("\n");
+				var standardize = data.replace(/\r\n/gi, "\n");
+				var filterWords = standardize.split(/\n/);
     			// "i" is to ignore case and "g" for global
     			var rgx = new RegExp(filterWords.join("|"), "gi");
    				function WordFilter(str) {
-						return str.replace(rgx, "****");
+					return str.replace(rgx, "****");
    				}
-   				if (!WordFilter(question).includes("****")) {
-					Question.create({'question' : question, 'votes' : 0}, function(err, question) {
+   				if (!WordFilter(question_string).includes("****")) {
+					Question.create({'question' : question_string, 'votes' : 0}, function(err, question) {
 						if (err) console.log(err);
         				else {
 							console.log('New Question: ' + WordFilter(question.question));
 						}
+						io.sockets.emit('new question', question.question);
 					});
-					io.sockets.emit('new question', question);
 				}
 			}
 		});	
@@ -161,6 +161,7 @@ io.on('connection', function(socket) {
 			if (question === null) return;
 			else {
 				question.vote = question.vote + 1;
+				question.save();
 				console.log("voted");
 			}
 		});
