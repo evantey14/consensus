@@ -79,8 +79,6 @@ app.use(function(err, req, res, next) {
 
 io.on('connection', function(socket) {
 
-	var id = Math.floor(Math.random() * 1000000);
-	console.log('New Connected User: ' + id);
   var room;
 
   socket.on('initialize', function(name){
@@ -88,69 +86,53 @@ io.on('connection', function(socket) {
     console.log(room);
     socket.emit('initialize', room);
   })
+  
+  // When confused, create new confusion object in db
+  socket.on('confused', function() {
+    // TODO: update with new schema 
+    Confusion.create({'user_id' : id}, function(err, confusion) { // for now, init end_time to the same as start
+      if (err) console.log(err);
+      else console.log('New confusion session: ' + id);
+    });
 
-	// On connection, send users list of existing questions
-	Question.find({}, function(err, questions) {
-		for (var i = 0; i<questions.length; i++) {
-			socket.emit('new question', questions[i].question);
-		}
-	});
+    // TODO: emit to admin
+  });
 
-	// When confused, create new confusion object in db
-	socket.on('confused', function() {
-		Confusion.create({'user_id' : id}, function(err, confusion) { // for now, init end_time to the same as start
-			if (err) console.log(err);
-  			else console.log('New confusion session: ' + id);
-		});
-		// TODO: emit to admin
-    io.sockets.emit('update_confused', 1);
-    room.updateConfusion(1, function(err){
-      if(err){
-        console.log(err);
+  // When not confused anymore, update confusion object with end time
+  socket.on('not_confused', function() {
+    Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
+      if (err) console.log(err);
+      if (confusion === null) return;
+      else {
+        confusion.end_time = new Date();
+        confusion.save();
+        console.log("End confusion session: " + id)
       }
     });
-	});
+    // TODO: emit to admin
+  });
 
-	// When not confused anymore, update confusion object with end time
-	socket.on('not_confused', function() {
-		Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
-
-			if (err) console.log(err);
-			if (confusion === null) return;
-			else {
-				confusion.end_time = new Date();
-				confusion.save();
-				console.log("End confusion session: " + id)
-			}
-		});
-		// TODO: emit to admin
-    io.sockets.emit('update_confused', -1);
-    room.updateConfusion(-1, function(err){
-        console.log(err);
+  // When asks a question, create new question object in db, and send to all users
+  socket.on('question', function(question) {
+    // TODO: strip question of whitespace and filter
+    Question.create({'question' : question, 'votes' : 0}, function(err, question) {
+      if (err) console.log(err);
+      else console.log('New Question: ' + question.question);
     });
-	});
-
-	// When asks a question, create new question object in db, and send to all users
-	socket.on('question', function(question) {
-		// TODO: strip question of whitespace and filter
-		Question.create({'question' : question, 'votes' : 0}, function(err, question) {
-			if (err) console.log(err);
-			else console.log('New Question: ' + question.question);
-		});
-		io.sockets.emit('new question', question);
-	});
-
-	socket.on('disconnect', function() {
-		Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
-			if (err) console.log(err);
-			if (confusion === null) return;
-			else {
-				confusion.end_time = new Date();
-				confusion.save();
-				console.log("End confusion session: " + id)
-			}
-		});
-	});
+    io.sockets.emit('new question', question);
+  });
+  
+  socket.on('disconnect', function() {
+    Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
+      if (err) console.log(err);
+      if (confusion === null) return;
+      else {
+        confusion.end_time = new Date();
+        confusion.save();
+        console.log("End confusion session: " + id)
+      }
+    });
+  });
 });
 
 module.exports = app;
