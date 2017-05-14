@@ -2,14 +2,14 @@ extends layout
 
 block content
   h1.ui.large.header
-    |session name
+    | #{name}
   .ui.grid
     .ten.wide.column
         button.ui.basic.button#confused
           | I feel confused
         button.ui.basic.button#not-confused
           | close confusion
-        #confusion-help(style="margin-top: 2em;")
+        #confusion-help(style="margin-top: 1em;")
           h2 what are you confused about?
           button.ui.basic.button#show-ask-options
             | ask a question
@@ -25,28 +25,17 @@ block content
         
     .six.wide.column#confusion-info
       p#the-confused 10 other people are also confused
-      .vert-margin.large
-        a#show-top-asks(style="padding: 0 1em 0 0")
+      #the-asks.vert-margin.large
+        a(style="padding: 0 1em 0 0")
           | top asks
-        a#show-recent-asks
+        a
           | recently asked
-        a#hide-asks.right
+        a.right
           | hide
-        #the-asks.recent-asks.vert-margin
-          p#question-1.question what a question
-          p#question-2.question ayy 
-          p#question-3.question lmao
-          
-  .ui.basic.modal(style="min-width: 350px; width: 30%; margin-left: -200px;")
-    .header#question-in-modal(style="padding-left:0; border:none;")
-      | question
-    .description(style="font-style:italics; border:none;")
-      | lookee a question
-    .actions(style="border:none;")
-      .ui.button.green.inverted.ok
-        | upvote
-      .ui.button.basic.cancel.inverted.red
-        | close
+        .top-asks.vert-margin
+          p#question-1 what a question
+          p#question-2 ayy 
+          p#question-3 lmao
 
   script(src="/javascripts/student.js")
   script(src="https://cdn.socket.io/socket.io-1.7.3.js")

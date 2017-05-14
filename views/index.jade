@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  .section.one
+    .ui.basic.segment
+      h1.large.centered.header.ui Welcome To Consensus
+      form.ui.form
+        .field
+          input.ui.input#room-name(placeholder = "Give your room a name, or let us choose one")
+      br
+      button.ui.basic.button.centered#home-button    
+        | Begin your class now
+  
+  .ui.modal#create-modal
+    .content
+      h2.medium.centered.header.ui#create-header
+          | Your room has been created
+      a(href = "/mockup/student")
+        button.ui.basic.button 
+          | Student Link
+      br
+      br
+      a(href = "/mockup/admin")
+        button.ui.basic.button
+          | Admin Link
+  script(src = "/javascripts/index.js")

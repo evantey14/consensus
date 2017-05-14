@@ -14,7 +14,8 @@ section.ui.container {
   padding-top: 8rem; }
 
 a {
-  color: #95989A; }
+  color: #95989A;
+  cursor: pointer;}
   a:hover {
     color: #A5E2E3; }
 
@@ -44,10 +45,10 @@ button.ui.basic.button.bgd.neutral {
   #not-confused.toggled {
     display: inline-block; }
 
-#the-asks.question{
-    cursor: pointer; }
+.question{
+    cursor: pointer!important; }
   #question-2{
-    color: #5E5E5E; }
+    color: #A3A3A3; }
   #question-3{
     color: #DADADA; }
 
