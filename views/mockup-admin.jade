@@ -12,7 +12,7 @@ block content
     .sixteen.wide.column(style="margin-bottom: 10px")
       h2.ui.small.header
         |confusion graph
-      .graph(style="width: auto; height: 20vh; background-color: #C7D8C6;")
+      p#graph
     .eight.wide.column
       h2.ui.small.header
         |top asks
@@ -23,3 +23,10 @@ block content
         |recent asks
       .questions
         p wow?
+
+  script(src="/javascripts/admin.js")
+  script(src="https://cdn.socket.io/socket.io-1.7.3.js")
+  script(src="/javascripts/rickshaw-master/vendor/d3.min.js")
+  script(src="/javascripts/rickshaw-master/vendor/d3.layout.min.js")
+  script(src="/javascripts/rickshaw-master/rickshaw.min.js")
+
