@@ -1,4 +1,8 @@
 $(document).ready(function(){
+  var questions = [];
+
+  var socket = io.connect('http://localhost:3000');
+
   $("#button").click(function(){
     $("#show-later").show();
   })
@@ -17,4 +21,15 @@ $(document).ready(function(){
   $('#close-session').click(function(){
     $('#close-session-modal.modal.ui').modal('show');
   })
+
+  update_questions = function(){
+    for(var i = 0; i < questions.length; i++){
+      if (i < 3){
+        var index = i+1;
+        $("#question-" + index).text("- " + questions[questions.length - 1 - i]);
+      }
+    }
+  };
+
+  update_questions();
 });
