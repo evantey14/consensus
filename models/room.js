@@ -1,14 +1,17 @@
 var mongoose = require('mongoose');
 
 var roomSchema = mongoose.Schema({
-  name      : { type : String},
-  admin_url : { type : String, unique: true},
-  questions : [{type : String }],
-  confusion : { type : Number},
-  active    : { type : Boolean}
+  name           : { type : String},
+  admin_url      : { type : String, unique: true},
+  questions      : [{type : String }],
+  confusion_time : [{
+      conf_number : { type: Number, required: true},
+      timestamp  : { type: Date, default: Date.now }
+  }],
+  active         : { type : Boolean}
 });
 
-roomSchema.methods.createRoom = function(name, cb){
+roomSchema.statics.createRoom = function(name, cb){
   room = {
     name      : name,
     admin_url : Math.random().toString(36).slice(2),
@@ -36,10 +39,10 @@ roomSchema.methods.createRoom = function(name, cb){
 
 }
 
-roomSchema.methods.upToSpeed = function(name, cb){
+roomSchema.statics.upToSpeed = function(name, cb){
   this.findOne({name: name},{questions: true, confusion: true, active: true}, function(room, err){
     if(err){
-      return cb(err)
+      return cb(err);
     };
     if(!room){
       console.log("INVALID ROOM");
@@ -49,6 +52,14 @@ roomSchema.methods.upToSpeed = function(name, cb){
   });
 }
 
-
+roomSchema.methods.updateConfusion = function(change, cb){
+  last_conf = this.confusion[this.confusion.length - 1];
+  new_conf = {
+    conf_number : last_conf.conf_number + change.
+    timestamp   : Date.now
+  }
+  this.confusion_time.push(new_conf);
+  this.save(cb);
+};
 
 module.exports = mongoose.model('Room', roomSchema);

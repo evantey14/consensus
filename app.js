@@ -81,10 +81,12 @@ io.on('connection', function(socket) {
 
 	var id = Math.floor(Math.random() * 1000000);
 	console.log('New Connected User: ' + id);
+  var room;
 
   socket.on('initialize', function(name){
-    roomInfo = Room.upToSpeed(name);
-    socket.emit('initialize', roomInfo);
+    room = Room.upToSpeed(name);
+    console.log(room);
+    socket.emit('initialize', room);
   })
 
 	// On connection, send users list of existing questions
@@ -102,6 +104,11 @@ io.on('connection', function(socket) {
 		});
 		// TODO: emit to admin
     io.sockets.emit('update_confused', 1);
+    room.updateConfusion(1, function(err){
+      if(err){
+        console.log(err);
+      }
+    });
 	});
 
 	// When not confused anymore, update confusion object with end time
@@ -118,6 +125,9 @@ io.on('connection', function(socket) {
 		});
 		// TODO: emit to admin
     io.sockets.emit('update_confused', -1);
+    room.updateConfusion(-1, function(err){
+        console.log(err);
+    });
 	});
 
 	// When asks a question, create new question object in db, and send to all users
