@@ -77,26 +77,32 @@ app.use(function(err, req, res, next) {
 
 
 io.on('connection', function(socket) {
-
-  socket.on('initialize', function(name){
-    var room = Room.upToSpeed(name);
-    console.log(room);
-    socket.emit('initialize', room);
-  })
+  var room_id;
+  
+  // when a socket connects, look for what room it's in
+  socket.on('initialize', function(room_identifier){
+    room = Room.upToSpeed("room", room_identifier, function(err, room){
+      if (err) console.log(err);
+      else {
+        room_id = room._id;
+	console.log(room);
+      }
+    });
+  });
   
   // When confused, create new confusion object in db
   socket.on('confused', function() {
     // TODO: update with new schema 
-    Confusion.create({'user_id' : id}, function(err, confusion) { // for now, init end_time to the same as start
+/*    Confusion.create({'user_id' : id}, function(err, confusion) { // for now, init end_time to the same as start
       if (err) console.log(err);
       else console.log('New confusion session: ' + id);
     });
-    // TODO: emit to admin
+  */  // TODO: emit to admin
   });
 
   // When not confused anymore, update confusion object with end time
   socket.on('not_confused', function() {
-    Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
+   /* Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
       if (err) console.log(err);
       if (confusion === null) return;
       else {
@@ -105,7 +111,7 @@ io.on('connection', function(socket) {
         console.log("End confusion session: " + id)
       }
     });
-    // TODO: emit to admin
+   */ // TODO: emit to admin
   });
 
   // When asks a question, create new question object in db, and send to all users
@@ -124,13 +130,14 @@ io.on('connection', function(socket) {
         }
         if (!WordFilter(question).includes("****")) {
           // TODO: update with new schema
-          Question.create({'question' : question, 'votes' : 0}, function(err, question) {
-            if (err) console.log(err);
-            else {
-              console.log('New Question: ' + WordFilter(question.question));
-            }
-            io.sockets.emit('new question', question.question);
-          });
+	  Room.findById(room_id, function(err, room){
+            if (err) console.log(err);  
+	    room.questions.push(question);
+            room.save(function(err){
+	      if (err) console.log(err);
+	      io.sockets.emit('new question', question);
+	    });
+	  });
 	}
       }
     });
@@ -138,7 +145,7 @@ io.on('connection', function(socket) {
  
   // TODO: update with new schema
   socket.on('disconnect', function() {
-    Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
+    /*Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
       if (err) console.log(err);
       if (confusion === null) return;
       else {
@@ -146,7 +153,7 @@ io.on('connection', function(socket) {
         confusion.save();
         console.log("End confusion session: " + id)
       }
-    });
+    });*/
   });
 });
 

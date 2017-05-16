@@ -16,8 +16,8 @@ roomSchema.statics.createRoom = function(name, cb){
     name      : name,
     admin_url : Math.random().toString(36).slice(12), //12 so easier to use for testing. Increase for production
     questions : [],
-    confusion : 0,
-    active    : false
+    confusion : [],
+    active    : true 
   });
 
   this.findOne({name: name}, function(existing_room){
@@ -42,19 +42,19 @@ roomSchema.statics.createRoom = function(name, cb){
 roomSchema.statics.upToSpeed = function(user_type, room_identifier, cb){
   var query = {};
   if (user_type == "admin"){
-    query = {admin_url: room_identifier};
+    query = {admin_url: room_identifier, active: true};
   } else {
-    query = {name: room_identifier};
+    query = {name: room_identifier, active: true};
   }
-  this.findOne(query, {questions: true, confusion: true, active: true}, function(room, err){
+  this.findOne(query, function(err, room){
     if(err){
-      return cb(err);
-    }
-    if(!room){
+      cb(err, null);
+    } else if(!room){
       console.log("INVALID ROOM");
-      return null;
+      cb(null, null);
+    } else {
+      cb(null, room);
     }
-    return room;
   });
 }
 

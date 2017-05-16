@@ -1,19 +1,27 @@
 $(document).ready(function(){
   var num_confused = 0;
-	var questions = [];
+  var questions = [];
 
-	var $confused = $('#confused');
-	var $notconfused = $('#not-confused');
+  var $confused = $('#confused');
+  var $notconfused = $('#not-confused');
   var $askbutton = $('#show-ask-options');
   var $closeask = $('#close-ask-options');
 
-	var socket = io.connect('http://localhost:3000');
+  var socket = io.connect('http://localhost:3000');
   $("#confusion-help").hide();
   $("#confusion-info").hide();
 
-	// TODO: we should keep some state variable so people can't repeatedly click 'confused' and send more messages
-	$confused.click(function() {
-		socket.emit('confused');
+  // this sends the last section of the url to the server
+  socket.emit('initialize', window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1));  
+
+  socket.on('initialize', function(room){
+  
+  });
+
+  // socket handlers
+  // TODO: we should keep some state variable so people can't repeatedly click 'confused' and send more messages
+  $confused.click(function() {
+    socket.emit('confused');
 
     $("#confused").toggleClass("disabled");
     $("#not-confused").toggleClass("toggled");
@@ -21,49 +29,31 @@ $(document).ready(function(){
     $("#show-ask-options").show();
     $("#ask-options").hide();
     $("#confusion-info").show();
-	});
+  });
 
-	$notconfused.click(function() {
-		socket.emit('not_confused');
+  $notconfused.click(function() {
+    socket.emit('not_confused');
 
     $("#confused").toggleClass("disabled");
     $("#not-confused").toggleClass("toggled");
     $("#confusion-help").hide();
     $("#confusion-info").hide();
-	});
-
-  $askbutton.click(function(){
-    $("#ask-options").show();
-    $askbutton.hide();
   });
 
-  $closeask.click(function(){
-    $("#ask-options").hide();
-    $askbutton.show();
+  var $submitquestion = $('#ask-question');
+  var $question = $('#the-question');
+
+  $questionform = $submitquestion.click(function(e) {
+    socket.emit('question', $question.val());
+    $question.val(' ');
+    return false;
   });
 
-  $('#hide-asks').click(function(){
-    $("#the-asks").hide();
-  });
-
-  $('#show-recent-asks').click(function(){
-    $("#the-asks").show();
-  });
-
-	var $submitquestion = $('#ask-question');
-	var $question = $('#the-question');
-
-	$questionform = $submitquestion.click(function(e) {
-		socket.emit('question', $question.val());
-		$question.val(' ');
-		return false;
-	});
-
-	socket.on('new question', function(q) {
-		questions.push(q);
-		console.log(questions);
+  socket.on('new question', function(q) {
+    questions.push(q);
+    console.log(questions);
     update_questions();
-	});
+  });
 
   socket.on('update_confused', function(change){
     console.log("Confusion change");
@@ -86,6 +76,26 @@ $(document).ready(function(){
     }
   };
 
+  // front end functionality
+  $askbutton.click(function(){
+    $("#ask-options").show();
+    $askbutton.hide();
+  });
+
+  $closeask.click(function(){
+    $("#ask-options").hide();
+    $askbutton.show();
+  });
+
+  $('#hide-asks').click(function(){
+    $("#the-asks").hide();
+  });
+
+  $('#show-recent-asks').click(function(){
+    $("#the-asks").show();
+  });
+
+
   $('.ui.modal').modal({blurring:true});
 
   $('.question').click(function(el){
@@ -93,6 +103,4 @@ $(document).ready(function(){
     $('.ui.modal.basic').modal('show');
   });
 
-
-  update_questions();
 });
