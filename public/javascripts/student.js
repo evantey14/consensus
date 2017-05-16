@@ -99,7 +99,7 @@ $(document).ready(function(){
   $('.ui.modal').modal({blurring:true});
 
   $('.question').click(function(el){
-    $("#question-modal").text($(this).text().substring(2));
+    $("#question-in-modal").text($(this).text().substring(2));
     $('.ui.modal.basic').modal('show');
   });
 
