@@ -6,21 +6,16 @@ var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var fs = require("fs");
 
 var routes = require('./routes/index');
 
-var Confusion = require('./models/confusion');
-var Question = require('./models/question');
 var Room = require('./models/room.js');
 
 var app = express();
 var io = socketio();
 app.io = io;
 
-var fs = require("fs");
-
-//Mongoose setup
-console.log('APP.JS');
 var mongoose = require('mongoose');
 var DB_URI = process.env.CONS_URI || 'mongodb://localhost:27017/consensus';
 
@@ -33,7 +28,7 @@ console.log('connected to DB');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// uncomment after placing your favicon in /public
+// TODO: update this favicon
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());

@@ -102,7 +102,6 @@ $(document).ready(function(){
     $("#the-asks").show();
   });
 
-
   $('.ui.modal').modal({blurring:true});
 
   $('.question').click(function(el){
