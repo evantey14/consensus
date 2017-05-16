@@ -77,7 +77,8 @@ app.use(function(err, req, res, next) {
 
 
 io.on('connection', function(socket) {
-  var room_id;
+  var room_id; // database id of the connection's room
+  var confused = false; // whether or not this connection is confused
   
   // when a socket connects, look for what room it's in
   socket.on('initialize', function(room_identifier){
@@ -86,8 +87,10 @@ io.on('connection', function(socket) {
       else {
         room_id = room._id;
 	console.log(room);
-	// TODO: send number of confused students
-	socket.emit('initialize', {questions: room.questions, num_confused: room.confusion[room.confusion.length-1].conf_number});
+	socket.emit('initialize', {
+	  questions: room.questions, 
+	  num_confused: room.confusion[room.confusion.length-1].conf_number
+	});
       }
     });
   });
@@ -98,20 +101,25 @@ io.on('connection', function(socket) {
       else {
         room.updateConfusion(1, function (err){
 	  if (err) console.log(err);
-	  else io.emit('update_confused', 1);
+	  else {
+            io.emit('update_confused', 1);
+	    confused = true;
+	  }
 	});
       }
     });
   });
 
-  // When not confused anymore, update confusion object with end time
   socket.on('not_confused', function() {
    Room.findById(room_id, function(err, room){
       if (err) console.log(err)
       else {
         room.updateConfusion(-1, function (err){
 	  if (err) console.log(err);
-	  else io.emit('update_confused', -1);
+	  else {
+            io.emit('update_confused', -1);
+	    confused = false;
+	  }
 	});
       }
     });
@@ -138,7 +146,7 @@ io.on('connection', function(socket) {
 	    room.questions.push(question);
             room.save(function(err){
 	      if (err) console.log(err);
-	      io.sockets.emit('new question', question);
+	      io.emit('new question', question);
 	    });
 	  });
 	}
@@ -146,18 +154,23 @@ io.on('connection', function(socket) {
     });
   });
  
-  // TODO: update with new schema
   socket.on('disconnect', function() {
-    /*Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
-      if (err) console.log(err);
-      if (confusion === null) return;
-      else {
-        confusion.end_time = new Date();
-        confusion.save();
-        console.log("End confusion session: " + id)
-      }
-    });*/
+    if (confused){
+      Room.findById(room_id, function(err, room){
+        if (err) console.log(err)
+        else {
+          room.updateConfusion(-1, function (err){
+	    if (err) console.log(err);
+            else {
+              io.emit('update_confused', -1);
+              confused = false;
+	    }
+         });
+	}
+      }); 
+    }
   });
+
 });
 
 module.exports = app;
