@@ -86,6 +86,7 @@ io.on('connection', function(socket) {
       else {
         room_id = room._id;
 	console.log(room);
+	socket.emit('initialize', {questions: room.questions});
       }
     });
   });

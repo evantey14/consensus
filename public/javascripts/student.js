@@ -15,7 +15,8 @@ $(document).ready(function(){
   socket.emit('initialize', window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1));  
 
   socket.on('initialize', function(room){
-  
+    questions = room.questions;
+    update_questions();
   });
 
   // socket handlers
