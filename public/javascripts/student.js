@@ -7,7 +7,7 @@ $(document).ready(function(){
   var $askbutton = $('#show-ask-options');
   var $closeask = $('#close-ask-options');
 
-  var socket = io.connect('http://localhost:3000');
+  var socket = io();
   $("#confusion-help").hide();
   $("#confusion-info").hide();
 

@@ -81,7 +81,7 @@ io.on('connection', function(socket) {
       if (err) console.log(err);
       else {
         room_id = room._id;
-	console.log(room);
+	console.log("New connection to room: " + room.name);
 	socket.emit('initialize', {
 	  questions: room.questions, 
 	  num_confused: room.confusion[room.confusion.length-1].conf_number
@@ -127,6 +127,7 @@ io.on('connection', function(socket) {
         console.log('error');
       }
       else {
+	// TODO: we should trim whitespace off the ends of questions
         var standardize = data.replace(/\r\n/gi, "\n");
         var filterWords = standardize.split(/\n/);
         // "i" is to ignore case and "g" for global
@@ -135,7 +136,6 @@ io.on('connection', function(socket) {
           return str.replace(rgx, "****");
         }
         if (!WordFilter(question).includes("****")) {
-          // TODO: update with new schema
 	  Room.findById(room_id, function(err, room){
             if (err) console.log(err);  
 	    room.questions.push(question);
