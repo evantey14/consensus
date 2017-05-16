@@ -4,7 +4,7 @@ var roomSchema = mongoose.Schema({
   name           : { type : String},
   admin_url      : { type : String, unique: true},
   questions      : [{type : String }],
-  confusion_time : [{
+  confusion      : [{
       conf_number : { type: Number, required: true},
       timestamp  : { type: Date, default: Date.now }
   }],
@@ -14,9 +14,9 @@ var roomSchema = mongoose.Schema({
 roomSchema.statics.createRoom = function(name, cb){
   var room = new this({
     name      : name,
-    admin_url : Math.random().toString(36).slice(12), //12 so easier to use for testing. Increase for production
+    admin_url : Math.random().toString(36).slice(12), //12 so easier to use for testing. decrease for production
     questions : [],
-    confusion : [],
+    confusion : [{conf_number: 0, timestamp: Date.now()}],
     active    : true 
   });
 
@@ -62,9 +62,9 @@ roomSchema.methods.updateConfusion = function(change, cb){
   last_conf = this.confusion[this.confusion.length - 1];
   new_conf = {
     conf_number : last_conf.conf_number + change,
-    timestamp   : Date.now
+    timestamp   : Date.now()
   }
-  this.confusion_time.push(new_conf);
+  this.confusion.push(new_conf);
   this.save(cb);
 };
 

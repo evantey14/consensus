@@ -16,7 +16,9 @@ $(document).ready(function(){
 
   socket.on('initialize', function(room){
     questions = room.questions;
+    num_confused = room.num_confused;
     update_questions();
+    update_confused();
   });
 
   // socket handlers
@@ -59,6 +61,10 @@ $(document).ready(function(){
   socket.on('update_confused', function(change){
     console.log("Confusion change");
     num_confused += change;
+    update_confused();
+  });
+
+  update_confused = function(){
     if(num_confused == 0){
       $("#the-confused").text("No one is confused right now :)");
     }else if (num_confused == 1){
@@ -66,8 +72,8 @@ $(document).ready(function(){
     }else{
       $("#the-confused").text("" + num_confused + " people are confused");
     }
-  });
-
+  }
+  
   update_questions = function(){
     for(var i = 0; i < questions.length; i++){
       if (i < 3){

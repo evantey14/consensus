@@ -86,33 +86,35 @@ io.on('connection', function(socket) {
       else {
         room_id = room._id;
 	console.log(room);
-	socket.emit('initialize', {questions: room.questions});
+	// TODO: send number of confused students
+	socket.emit('initialize', {questions: room.questions, num_confused: room.confusion[room.confusion.length-1].conf_number});
       }
     });
   });
   
-  // When confused, create new confusion object in db
   socket.on('confused', function() {
-    // TODO: update with new schema 
-/*    Confusion.create({'user_id' : id}, function(err, confusion) { // for now, init end_time to the same as start
-      if (err) console.log(err);
-      else console.log('New confusion session: ' + id);
+    Room.findById(room_id, function(err, room){
+      if (err) console.log(err)
+      else {
+        room.updateConfusion(1, function (err){
+	  if (err) console.log(err);
+	  else io.emit('update_confused', 1);
+	});
+      }
     });
-  */  // TODO: emit to admin
   });
 
   // When not confused anymore, update confusion object with end time
   socket.on('not_confused', function() {
-   /* Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
-      if (err) console.log(err);
-      if (confusion === null) return;
+   Room.findById(room_id, function(err, room){
+      if (err) console.log(err)
       else {
-        confusion.end_time = new Date();
-        confusion.save();
-        console.log("End confusion session: " + id)
+        room.updateConfusion(-1, function (err){
+	  if (err) console.log(err);
+	  else io.emit('update_confused', -1);
+	});
       }
     });
-   */ // TODO: emit to admin
   });
 
   // When asks a question, create new question object in db, and send to all users
