@@ -16,11 +16,12 @@ $(document).ready(function(){
       chosen = true;
     }
     $.post("/create", {name: name}, function(resp){
-      if(resp == "DONE"){
+      if (!resp) alert("Choose another name!");
+      else {
         $("#create-header").text(name + " has been created");
+        $("#student-link").attr('href', "/room/" + resp.student_url);
+        $("#admin-link").attr('href', "/admin/" + resp.admin_url);
         $("#create-modal").modal('show');
-      }else{
-        alert("Choose another name!");
       }
     });
     // TODO: in we're generating a name, we should keep trying until it works (some code for this can be found below)

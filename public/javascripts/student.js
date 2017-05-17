@@ -12,7 +12,10 @@ $(document).ready(function(){
   $("#confusion-info").hide();
 
   // this sends the last section of the url to the server
-  socket.emit('initialize', window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1));  
+  socket.emit('initialize', {
+    user_type: "student",
+    room_identifier: window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1)
+  });
 
   socket.on('initialize', function(room){
     questions = room.questions;
@@ -26,7 +29,7 @@ $(document).ready(function(){
   $confused.click(function() {
     socket.emit('confused');
 
-    $("#confused").toggleClass("disabled");
+    $("#confused").hide();
     $("#not-confused").toggleClass("toggled");
     $("#confusion-help").show();
     $("#show-ask-options").show();
@@ -37,7 +40,7 @@ $(document).ready(function(){
   $notconfused.click(function() {
     socket.emit('not_confused');
 
-    $("#confused").toggleClass("disabled");
+    $("#confused").show();
     $("#not-confused").toggleClass("toggled");
     $("#confusion-help").hide();
     $("#confusion-info").hide();
@@ -73,7 +76,7 @@ $(document).ready(function(){
       $("#the-confused").text("" + num_confused + " people are confused");
     }
   }
-  
+
   update_questions = function(){
     for(var i = 0; i < questions.length; i++){
       if (i < 3){

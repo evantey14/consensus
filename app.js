@@ -17,6 +17,7 @@ var io = socketio();
 app.io = io;
 
 var mongoose = require('mongoose');
+mongoose.set('debug', true);
 var DB_URI = process.env.CONS_URI || 'mongodb://localhost:27017/consensus';
 
 console.log(DB_URI);
@@ -76,15 +77,15 @@ io.on('connection', function(socket) {
   var confused = false; // whether or not this connection is confused
   
   // when a socket connects, look for what room it's in
-  socket.on('initialize', function(room_identifier){
-    room = Room.upToSpeed("room", room_identifier, function(err, room){
+  socket.on('initialize', function(room){
+    Room.upToSpeed(room.user_type, room.room_identifier, function(err, new_room){
       if (err) console.log(err);
       else {
-        room_id = room._id;
-	console.log("New connection to room: " + room.name);
+        room_id = new_room._id;
+	console.log("New connection to room: " + new_room.name);
 	socket.emit('initialize', {
-	  questions: room.questions, 
-	  num_confused: room.confusion[room.confusion.length-1].conf_number
+	  questions: new_room.questions, 
+	  num_confused: new_room.confusion[new_room.confusion.length-1].conf_number
 	});
       }
     });
