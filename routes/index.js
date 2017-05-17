@@ -8,7 +8,7 @@ router.get('/', function(req, res, next){
 
 router.post('/create', function(req, res, next){
   var name = req.body.name;
-  var safeURL = new RegExp("/^[a-z0-9\-\.\(\)\!]+$/i");
+  var safeURL = new RegExp(/^[a-z0-9\-\.\(\)\!]+$/i);
   if(!safeURL.test(name)) return res.send(403); //don't let them enter a bad url
   Room.createRoom(name, function(err, room){
     if (err) console.log(err);
