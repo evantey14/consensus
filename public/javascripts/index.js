@@ -12,8 +12,6 @@ $(document).ready(function(){
     var name = $("#room-name").val();
     var chosen = false;
 
-    var safeURL = new RegExp("/^[-a-z0-9\.\(\)\!]+$/i");
-    return alert(safeURL.test(name));
     if(!name){
       name = generateName();
       chosen = true;
