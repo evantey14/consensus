@@ -129,6 +129,7 @@ io.on('connection', function(socket) {
       }
       else {
 	// TODO: we should trim whitespace off the ends of questions
+        question = question.trim();
         var standardize = data.replace(/\r\n/gi, "\n");
         var filterWords = standardize.split(/\n/);
         // "i" is to ignore case and "g" for global
@@ -137,15 +138,15 @@ io.on('connection', function(socket) {
           return str.replace(rgx, "****");
         }
         if (!WordFilter(question).includes("****")) {
-	  Room.findById(room_id, function(err, room){
-            if (err) console.log(err);  
-	    room.questions.push(question);
-            room.save(function(err){
-	      if (err) console.log(err);
-	      io.emit('new question', question);
-	    });
-	  });
-	}
+	       Room.findById(room_id, function(err, room){
+          if (err) console.log(err);  
+	        room.questions.push({q : question, vote : 0});
+          room.save(function(err){
+    	      if (err) console.log(err);
+    	      io.emit('new question', {q : question, vote : 0});
+    	    });
+    	  });
+    	}
       }
     });
   });
@@ -156,15 +157,36 @@ io.on('connection', function(socket) {
         if (err) console.log(err)
         else {
           room.updateConfusion(-1, function (err){
-	    if (err) console.log(err);
-            else {
+	         if (err) console.log(err);
+           else {
               io.emit('update_confused', -1);
               confused = false;
-	    }
+	         }
          });
-	}
+	     }
       }); 
     }
+  });
+
+  socket.on('upvote', function(question) {
+    if (question === null) {
+      return;
+    }
+    Room.findById(room_id, function(err, room) {
+      if (err) console.log(err);
+      else {
+        console.log(question);
+        room.updateQuestion(question, function (err){
+          if (err) console.log(err);
+          else {
+            if (question !== null) {
+              io.emit('upvote_question', question);
+              console.log(question);
+            }
+          }
+        });
+      }
+    });
   });
 
 });

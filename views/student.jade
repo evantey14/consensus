@@ -33,17 +33,20 @@ block content
         a#hide-asks.right
           | hide
         #the-asks.recent-asks.vert-margin
-          p#question-1.question what a question
-          p#question-2.question ayy 
-          p#question-3.question lmao
+          p#question-1.question placeholder1
+          p#question-2.question placeholder2
+          p#question-3.question placeholder3
           
     .ui.basic.modal(style="min-width: 350px; width: 30%; margin-left: -200px;")
-      .header#question-modal(style="padding-left:0; border:none;")
+      .header(style="padding-left:0; border:none;")
         | question
-      .description(style="font-style:italics; border:none;")
+      .description#question-modal(style="font-style:italics; border:none;")
         | lookee a question
+
       .actions(style="border:none;")
-        .ui.button.green.inverted.ok
+        #vote-modal(style="font-style:italics; border:none; align:right")
+          | 0 vote
+        .ui.button.green.inverted.ok#upvote
           | upvote
         .ui.button.basic.cancel.inverted.red
           | close

@@ -1,4 +1,5 @@
 $(document).ready(function(){
+
   var questions = [];
   var num_confused = 0;
 
@@ -39,6 +40,16 @@ $(document).ready(function(){
   $("#button").click(function(){
     $("#show-later").show();
   })
+
+  socket.on("update_confused", function(change){
+  	console.log("admin notified");
+
+  	data.push({x: 4, y: 17});
+
+  	graph.update();
+
+	graph.render();
+  });
 
   $('.ui.modal').modal({blurring:true});
 

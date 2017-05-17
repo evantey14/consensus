@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  .ui.grid
+    .row
+      .ten.wide.column
+        h1.ui.large.header
+          |session name
+      .six.wide.column
+        a(style="float: right;") close session
+        a(style="float: right; margin-right: 10px;") session links
+    .sixteen.wide.column(style="margin-bottom: 10px")
+      h2.ui.small.header
+        |confusion graph
+      p#graph
+    .eight.wide.column
+      h2.ui.small.header
+        |top asks
+      .questions
+        p same?
+    .eight.wide.column
+      h2.ui.small.header
+        |recent asks
+      .questions
+        p wow?
+
+  script(src="/javascripts/admin.js")
+  script(src="https://cdn.socket.io/socket.io-1.7.3.js")
+  script(src="/javascripts/rickshaw-master/vendor/d3.min.js")
+  script(src="/javascripts/rickshaw-master/vendor/d3.layout.min.js")
+  script(src="/javascripts/rickshaw-master/rickshaw.min.js")
+
