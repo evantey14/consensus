@@ -29,7 +29,7 @@ $(document).ready(function(){
   $confused.click(function() {
     socket.emit('confused');
 
-    $("#confused").toggleClass("disabled");
+    $("#confused").hide();
     $("#not-confused").toggleClass("toggled");
     $("#confusion-help").show();
     $("#show-ask-options").show();
@@ -40,7 +40,7 @@ $(document).ready(function(){
   $notconfused.click(function() {
     socket.emit('not_confused');
 
-    $("#confused").toggleClass("disabled");
+    $("#confused").show();
     $("#not-confused").toggleClass("toggled");
     $("#confusion-help").hide();
     $("#confusion-info").hide();
@@ -76,7 +76,7 @@ $(document).ready(function(){
       $("#the-confused").text("" + num_confused + " people are confused");
     }
   }
-  
+
   update_questions = function(){
     for(var i = 0; i < questions.length; i++){
       if (i < 3){
