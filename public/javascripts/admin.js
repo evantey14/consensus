@@ -1,24 +1,39 @@
 $(document).ready(function(){
-  var socket = io.connect('http://localhost:3000');
 
-  var data = [ { x: 0, y: 40 }, { x: 1, y: 49 }, { x: 2, y: 17 }, { x: 3, y: 42 } ];
+  var questions = [];
+  var num_confused = 0;
 
+  var socket = io();
+  socket.emit('initialize', window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1));
 
-  var e = {
-        element: document.querySelector("#graph"),
-        width: 580,
-        height: 250,
-        series: [ {
-                color: 'steelblue',
-                data: data
-        } ]
-  };
+  socket.on('initialize', function(room){
+    questions = room.questions;
+    num_confused = room.num_confused;
+    update_questions();
+    update_confused();
+  });
 
-  var graph = new Rickshaw.Graph(e);
+  socket.on('new question', function(q) {
+    questions.push(q);
+    console.log(questions);
+    update_questions();
+  });
 
-  graph.render();
+  socket.on('update_confused', function(change){
+    console.log("Confusion change");
+    num_confused += change;
+    update_confused();
+  });
 
+  update_questions = function(){
+    // TODO: fill with appropriate behavior
+  }
 
+  update_confused = function(){
+    // TODO: fill with appropriate behavior
+  }
+
+  // front end functionality
   $("#button").click(function(){
     $("#show-later").show();
   })
@@ -47,4 +62,15 @@ $(document).ready(function(){
   $('#close-session').click(function(){
     $('#close-session-modal.modal.ui').modal('show');
   })
+
+  update_questions = function(){
+    for(var i = 0; i < questions.length; i++){
+      if (i < 3){
+        var index = i+1;
+        $("#question-" + index).text("- " + questions[questions.length - 1 - i]);
+      }
+    }
+  };
+
+  update_questions();
 });

@@ -4,7 +4,7 @@ var roomSchema = mongoose.Schema({
   name           : { type : String},
   admin_url      : { type : String, unique: true},
   questions      : [{type : String }],
-  confusion_time : [{
+  confusion      : [{
       conf_number : { type: Number, required: true},
       timestamp  : { type: Date, default: Date.now }
   }],
@@ -14,10 +14,10 @@ var roomSchema = mongoose.Schema({
 roomSchema.statics.createRoom = function(name, cb){
   var room = new this({
     name      : name,
-    admin_url : Math.random().toString(36).slice(12), //12 so easier to use for testing. Increase for production
+    admin_url : Math.random().toString(36).slice(12), //12 so easier to use for testing. decrease for production
     questions : [],
-    confusion : 0,
-    active    : false
+    confusion : [{conf_number: 0, timestamp: Date.now()}],
+    active    : true 
   });
 
   this.findOne({name: name}, function(existing_room){
@@ -42,19 +42,19 @@ roomSchema.statics.createRoom = function(name, cb){
 roomSchema.statics.upToSpeed = function(user_type, room_identifier, cb){
   var query = {};
   if (user_type == "admin"){
-    query = {admin_url: room_identifier};
+    query = {admin_url: room_identifier, active: true};
   } else {
-    query = {name: room_identifier};
+    query = {name: room_identifier, active: true};
   }
-  this.findOne(query, {questions: true, confusion: true, active: true}, function(room, err){
+  this.findOne(query, function(err, room){
     if(err){
-      return cb(err);
-    }
-    if(!room){
+      cb(err, null);
+    } else if(!room){
       console.log("INVALID ROOM");
-      return null;
+      cb(null, null);
+    } else {
+      cb(null, room);
     }
-    return room;
   });
 }
 
@@ -62,9 +62,9 @@ roomSchema.methods.updateConfusion = function(change, cb){
   last_conf = this.confusion[this.confusion.length - 1];
   new_conf = {
     conf_number : last_conf.conf_number + change,
-    timestamp   : Date.now
+    timestamp   : Date.now()
   }
-  this.confusion_time.push(new_conf);
+  this.confusion.push(new_conf);
   this.save(cb);
 };
 
