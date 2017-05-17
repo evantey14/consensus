@@ -12,7 +12,10 @@ $(document).ready(function(){
   $("#confusion-info").hide();
 
   // this sends the last section of the url to the server
-  socket.emit('initialize', window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1));  
+  socket.emit('initialize', {
+    user_type: "student",
+    room_identifier: window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1)
+  });
 
   socket.on('initialize', function(room){
     questions = room.questions;

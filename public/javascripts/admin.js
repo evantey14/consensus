@@ -3,7 +3,10 @@ $(document).ready(function(){
   var num_confused = 0;
 
   var socket = io();
-  socket.emit('initialize', window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1));
+  socket.emit('initialize', {
+    user_type: "admin",
+    room_identifier: window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1)
+  });
 
   socket.on('initialize', function(room){
     questions = room.questions;

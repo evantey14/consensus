@@ -23,16 +23,15 @@ roomSchema.statics.createRoom = function(name, cb){
   this.findOne({name: name}, function(existing_room){
     if(existing_room){
       //Same room found with same name, don't make the room
-      cb(false);
+      cb(null, null);
     } else {
       console.log("NEW ROOM CREATION: " + name);
       console.log("ADMIN URL FOR " + name + ": " + room.admin_url);
       room.save(function(err){
         if(err){
-          console.log(err);
-          cb(false);
+          cb(err, null);
         } else {
-	  cb(true);
+	  cb(null, room);
 	}
       });
     }
