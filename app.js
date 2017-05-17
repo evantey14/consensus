@@ -6,21 +6,16 @@ var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var fs = require("fs");
 
 var routes = require('./routes/index');
 
-var Confusion = require('./models/confusion');
-var Question = require('./models/question');
 var Room = require('./models/room.js');
 
 var app = express();
 var io = socketio();
 app.io = io;
 
-var fs = require("fs");
-
-//Mongoose setup
-console.log('APP.JS');
 var mongoose = require('mongoose');
 var DB_URI = process.env.CONS_URI || 'mongodb://localhost:27017/consensus';
 
@@ -33,7 +28,7 @@ console.log('connected to DB');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// uncomment after placing your favicon in /public
+// TODO: update this favicon
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -77,35 +72,52 @@ app.use(function(err, req, res, next) {
 
 
 io.on('connection', function(socket) {
-
-  socket.on('initialize', function(name){
-    var room = Room.upToSpeed(name);
-    console.log(room);
-    socket.emit('initialize', room);
-  })
+  var room_id; // database id of the connection's room
+  var confused = false; // whether or not this connection is confused
   
-  // When confused, create new confusion object in db
-  socket.on('confused', function() {
-    // TODO: update with new schema 
-    Confusion.create({'user_id' : id}, function(err, confusion) { // for now, init end_time to the same as start
+  // when a socket connects, look for what room it's in
+  socket.on('initialize', function(room_identifier){
+    room = Room.upToSpeed("room", room_identifier, function(err, room){
       if (err) console.log(err);
-      else console.log('New confusion session: ' + id);
-    });
-    // TODO: emit to admin
-  });
-
-  // When not confused anymore, update confusion object with end time
-  socket.on('not_confused', function() {
-    Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
-      if (err) console.log(err);
-      if (confusion === null) return;
       else {
-        confusion.end_time = new Date();
-        confusion.save();
-        console.log("End confusion session: " + id)
+        room_id = room._id;
+	console.log("New connection to room: " + room.name);
+	socket.emit('initialize', {
+	  questions: room.questions, 
+	  num_confused: room.confusion[room.confusion.length-1].conf_number
+	});
       }
     });
-    // TODO: emit to admin
+  });
+  
+  socket.on('confused', function() {
+    Room.findById(room_id, function(err, room){
+      if (err) console.log(err)
+      else {
+        room.updateConfusion(1, function (err){
+	  if (err) console.log(err);
+	  else {
+            io.emit('update_confused', 1);
+	    confused = true;
+	  }
+	});
+      }
+    });
+  });
+
+  socket.on('not_confused', function() {
+   Room.findById(room_id, function(err, room){
+      if (err) console.log(err)
+      else {
+        room.updateConfusion(-1, function (err){
+	  if (err) console.log(err);
+	  else {
+            io.emit('update_confused', -1);
+	    confused = false;
+	  }
+	});
+      }
+    });
   });
 
   // When asks a question, create new question object in db, and send to all users
@@ -115,6 +127,7 @@ io.on('connection', function(socket) {
         console.log('error');
       }
       else {
+	// TODO: we should trim whitespace off the ends of questions
         var standardize = data.replace(/\r\n/gi, "\n");
         var filterWords = standardize.split(/\n/);
         // "i" is to ignore case and "g" for global
@@ -123,31 +136,36 @@ io.on('connection', function(socket) {
           return str.replace(rgx, "****");
         }
         if (!WordFilter(question).includes("****")) {
-          // TODO: update with new schema
-          Question.create({'question' : question, 'votes' : 0}, function(err, question) {
-            if (err) console.log(err);
-            else {
-              console.log('New Question: ' + WordFilter(question.question));
-            }
-            io.sockets.emit('new question', question.question);
-          });
+	  Room.findById(room_id, function(err, room){
+            if (err) console.log(err);  
+	    room.questions.push(question);
+            room.save(function(err){
+	      if (err) console.log(err);
+	      io.emit('new question', question);
+	    });
+	  });
 	}
       }
     });
   });
  
-  // TODO: update with new schema
   socket.on('disconnect', function() {
-    Confusion.findOne({'user_id' : id, 'end_time' : new Date(0)}, function(err, confusion) {
-      if (err) console.log(err);
-      if (confusion === null) return;
-      else {
-        confusion.end_time = new Date();
-        confusion.save();
-        console.log("End confusion session: " + id)
-      }
-    });
+    if (confused){
+      Room.findById(room_id, function(err, room){
+        if (err) console.log(err)
+        else {
+          room.updateConfusion(-1, function (err){
+	    if (err) console.log(err);
+            else {
+              io.emit('update_confused', -1);
+              confused = false;
+	    }
+         });
+	}
+      }); 
+    }
   });
+
 });
 
 module.exports = app;

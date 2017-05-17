@@ -1,8 +1,38 @@
 $(document).ready(function(){
   var questions = [];
+  var num_confused = 0;
 
-  var socket = io.connect('http://localhost:3000');
+  var socket = io();
+  socket.emit('initialize', window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1));
 
+  socket.on('initialize', function(room){
+    questions = room.questions;
+    num_confused = room.num_confused;
+    update_questions();
+    update_confused();
+  });
+
+  socket.on('new question', function(q) {
+    questions.push(q);
+    console.log(questions);
+    update_questions();
+  });
+
+  socket.on('update_confused', function(change){
+    console.log("Confusion change");
+    num_confused += change;
+    update_confused();
+  });
+
+  update_questions = function(){
+    // TODO: fill with appropriate behavior
+  }
+
+  update_confused = function(){
+    // TODO: fill with appropriate behavior
+  }
+
+  // front end functionality
   $("#button").click(function(){
     $("#show-later").show();
   })
