@@ -3,7 +3,10 @@ var mongoose = require('mongoose');
 var roomSchema = mongoose.Schema({
   name           : { type : String},
   admin_url      : { type : String, unique: true},
-  questions      : [{type : String }],
+  questions      : [{
+      q : {type : String},
+      vote: {type : Number}
+  }],
   confusion      : [{
       conf_number : { type: Number, required: true},
       timestamp  : { type: Date, default: Date.now }
@@ -67,5 +70,15 @@ roomSchema.methods.updateConfusion = function(change, cb){
   this.confusion.push(new_conf);
   this.save(cb);
 };
+
+roomSchema.methods.updateQuestion = function(question, cb) {
+  allQuestions = this.questions;
+  for (var i = 0; i < allQuestions.length; i++) {
+    if (allQuestions[i].q == question) {
+      allQuestions[i].vote = allQuestions[i].vote + 1;
+    }
+  }
+  this.save(cb);
+}
 
 module.exports = mongoose.model('Room', roomSchema);

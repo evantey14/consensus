@@ -78,7 +78,7 @@ $(document).ready(function(){
     for(var i = 0; i < questions.length; i++){
       if (i < 3){
         var index = i+1;
-        $("#question-" + index).text("- " + questions[questions.length - 1 - i]);
+        $("#question-" + index).text("- " + questions[questions.length - 1 - i].q);
       }
     }
   };
@@ -105,8 +105,33 @@ $(document).ready(function(){
   $('.ui.modal').modal({blurring:true});
 
   $('.question').click(function(el){
-    $("#question-in-modal").text($(this).text().substring(2));
+    var q = $(this).text().substring(2);
+    var v = 0;
+    $("#question-modal").text(q);
+    for (var i = 0; i < questions.length; i++) {
+      console.log(q + questions[i].q);
+      if (questions[i].q == q) {
+        v = questions[i].vote;
+        console.log(v);
+        break;
+      }
+    }
+    $("#vote-modal").text(v);
     $('.ui.modal.basic').modal('show');
+  });
+
+  $('#upvote').click(function(el){
+    var question = $("#question-modal").text();
+    socket.emit('upvote', question);
+  });
+
+  socket.on('upvote_question', function(question) {
+    console.log(question + 'here');
+    for (var i = 0; i < questions.length; i++) {
+      if (questions[i].q == question) {
+        questions[i].vote = questions[i].vote + 1;
+      }
+    }
   });
 
 });
