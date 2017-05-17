@@ -11,19 +11,26 @@ $(document).ready(function(){
     // TODO: we should validate that these names are ok to use as student links
     var name = $("#room-name").val();
     var chosen = false;
+
+    var safeURL = new RegExp("/^[-a-z0-9\.\(\)\!]+$/i");
+    return alert(safeURL.test(name));
     if(!name){
       name = generateName();
       chosen = true;
     }
-    $.post("/create", {name: name}, function(resp){
-      if (!resp) alert("Choose another name!");
+    $.post("/create", {name: name})
+      .done(function(resp){
+      if (!resp) return alert("Choose another name!");
       else {
         $("#create-header").text(name + " has been created");
         $("#student-link").attr('href', "/room/" + resp.student_url);
         $("#admin-link").attr('href', "/admin/" + resp.admin_url);
         $("#create-modal").modal('show');
       }
-    });
+    })
+     .fail(function(){
+       alert("Choose another name!");
+     });
     // TODO: in we're generating a name, we should keep trying until it works (some code for this can be found below)
     /*if(chosen){
       $.post("/create", {name: name}, function(resp){
