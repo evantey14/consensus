@@ -114,18 +114,18 @@ io.on('connection', function(socket) {
   });
 
   socket.on('not_confused', function() {
-   Room.findById(room_id, function(err, room){
+    Room.findById(room_id, function(err, room){
       if (err) {
         console.log(err);
       } else {
         room.updateConfusion(-1, function (err){
-	  if (err) {
+	        if (err) {
             console.log(err);
-	  } else {
+	        } else {
             io.emit('update_confused', -1);
-	    confused = false;
-	  }
-	});
+	          confused = false;
+	    }
+	      });
       }
     });
   });
@@ -137,7 +137,7 @@ io.on('connection', function(socket) {
         console.log('error');
       }
       else {
-	// TODO: we should trim whitespace off the ends of questions
+	    // TODO: we should trim whitespace off the ends of questions
         question = question.trim();
         if (question == "") { return; }
         var standardize = data.replace(/\r\n/gi, "\n");
@@ -165,6 +165,31 @@ io.on('connection', function(socket) {
     	  }
       }
     });
+  });
+
+  socket.on('resolve', function(question){
+    if(!isAdmin){
+      console.log("RESOLVE FAILED ON " + question + " - NO PERMISSION");
+      return;
+    }
+
+    Room.findById(room_id, function(err, room){
+      if (err) {
+        console.log("RESOLVE FAILED ON " + question);
+        console.log(err);
+      } else {
+        room.resolveQuestion(question, function(err){
+          if (err) {
+            console.log("RESOLVE FAILED ON " + question);
+            console.log(err);
+          } else {
+            console.log("FINISH RESOLVE ON " + question);
+            io.emit('resolve', question);
+          }
+        });
+      }
+
+    })
   });
 
   socket.on('disconnect', function() {
