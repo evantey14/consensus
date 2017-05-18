@@ -32,16 +32,29 @@ block content
           | recently asked
         a#hide-asks.right
           | hide
-        #the-asks.recent-asks.vert-margin
-          p#question-1.question placeholder1
-          p#question-2.question placeholder2
-          p#question-3.question placeholder3
+        #the-asks
+          #recent-asks.vert-margin(style="display:inline-block;")
+            p#rquestion-1.vote(style="font-style:italics; border:none; display:inline-block;") +0/
+              #rquestion-1.question(style="display:inline-block;") placeholder1
+            p#rquestion-2.vote(style="font-style:italics; border:none; display:inline-block;") +0/
+              #rquestion-2.question(style="display:inline-block;") placeholder2
+            p#rquestion-3.vote(style="font-style:italics; border:none; display:inline-block;") +0/
+              #rquestion-3.question(style="display:inline-block;") placeholder3
+          #top-asks.vert-margin(style="display:inline-block;")
+            p#tquestion-1.vote(style="font-style:italics; border:none; display:inline-block;") +0/
+              #tquestion-1.question(style="display:inline-block;") placeholder1
+            p#tquestion-2.vote(style="font-style:italics; border:none; display:inline-block;") +0/
+              #tquestion-2.question(style="display:inline-block;") placeholder2
+            p#tquestion-3.vote(style="font-style:italics; border:none; display:inline-block;") +0/
+              #tquestion-3.question(style="display:inline-block;") placeholder3
+
           
     .ui.basic.modal(style="min-width: 350px; width: 30%; margin-left: -200px;")
       .header(style="padding-left:0; border:none;")
         | question
       .description#question-modal(style="font-style:italics; border:none;")
         | lookee a question
+
 
       .actions(style="border:none;")
         #vote-modal(style="font-style:italics; border:none; align:right")

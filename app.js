@@ -130,6 +130,7 @@ io.on('connection', function(socket) {
       else {
 	// TODO: we should trim whitespace off the ends of questions
         question = question.trim();
+        if (question == "") return;
         var standardize = data.replace(/\r\n/gi, "\n");
         var filterWords = standardize.split(/\n/);
         // "i" is to ignore case and "g" for global

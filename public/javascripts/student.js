@@ -1,15 +1,19 @@
 $(document).ready(function(){
   var num_confused = 0;
   var questions = [];
+  var sorted_questions = [];
 
   var $confused = $('#confused');
   var $notconfused = $('#not-confused');
   var $askbutton = $('#show-ask-options');
   var $closeask = $('#close-ask-options');
 
+  var top_quest = false;
+
   var socket = io();
   $("#confusion-help").hide();
   $("#confusion-info").hide();
+  $("#the-asks").hide();
 
   // this sends the last section of the url to the server
   socket.emit('initialize', {
@@ -20,6 +24,20 @@ $(document).ready(function(){
   socket.on('initialize', function(room){
     questions = room.questions;
     num_confused = room.num_confused;
+
+    var copy = questions.slice();
+    for (var i = 0; i < questions.length; i++) {
+      var current_low_index = 0;
+      for (var j = 0; j < copy.length; j++) {
+        var q = copy[j];
+        if (q.vote <= copy[current_low_index].vote) {
+          current_low_index = j;
+        }
+      }
+      sorted_questions[i] = copy[current_low_index];
+      copy.splice(current_low_index,1);
+    }
+
     update_questions();
     update_confused();
   });
@@ -57,7 +75,21 @@ $(document).ready(function(){
 
   socket.on('new question', function(q) {
     questions.push(q);
-    console.log(questions);
+
+    for (var i = 0; i < sorted_questions.length; i++) {
+      if (q.vote <= sorted_questions[i].vote) {
+        sorted_questions = sorted_questions.slice(0,i).concat([q], sorted_questions.slice(i));
+        break;
+      }
+      if (i == sorted_questions.length-1) {
+        sorted_questions.push(q);
+        break;
+      }
+    }
+    if (sorted_questions.length == 0) {
+      sorted_questions = [q];
+    }
+
     update_questions();
   });
 
@@ -78,10 +110,23 @@ $(document).ready(function(){
   }
 
   update_questions = function(){
+    for(var i = 0; i < sorted_questions.length; i++){
+      if (i < 3){
+        var index = i+1;
+        var v = sorted_questions[sorted_questions.length - 1 - i].vote;
+        var q = sorted_questions[sorted_questions.length - 1 - i].q;
+        $("#tquestion-" + index + ".vote").text("+" + v + "/");
+        $("#tquestion-" + index + ".question").text(q);
+      }
+    }
+
     for(var i = 0; i < questions.length; i++){
       if (i < 3){
         var index = i+1;
-        $("#question-" + index).text("- " + questions[questions.length - 1 - i].q);
+        var v = questions[questions.length - 1 - i].vote;
+        var q = questions[questions.length - 1 - i].q;
+        $("#rquestion-" + index + ".vote").text("+" + v + "/");
+        $("#rquestion-" + index + ".question").text(q);
       }
     }
   };
@@ -103,19 +148,35 @@ $(document).ready(function(){
 
   $('#show-recent-asks').click(function(){
     $("#the-asks").show();
+    for (var i = 0; i < 3; i++) {
+      var index = i + 1;
+      $("#rquestion-" + index + ".vote").show();
+      $("#tquestion-" + index + ".vote").hide();
+      $("#rquestion-" + index + ".question").show();
+      $("#tquestion-" + index + ".question").hide();
+    }
+  });
+
+  $('#show-top-asks').click(function(){
+    $("#the-asks").show();
+    for (var i = 0; i < 3; i++) {
+      var index = i + 1;
+      $("#rquestion-" + index + ".vote").hide();
+      $("#tquestion-" + index + ".vote").show();
+      $("#rquestion-" + index + ".question").hide();
+      $("#tquestion-" + index + ".question").show();
+    }
   });
 
   $('.ui.modal').modal({blurring:true});
 
   $('.question').click(function(el){
-    var q = $(this).text().substring(2);
+    var q = $(this).text();
     var v = 0;
     $("#question-modal").text(q);
     for (var i = 0; i < questions.length; i++) {
-      console.log(q + questions[i].q);
       if (questions[i].q == q) {
         v = questions[i].vote;
-        console.log(v);
         break;
       }
     }
@@ -129,12 +190,26 @@ $(document).ready(function(){
   });
 
   socket.on('upvote_question', function(question) {
-    console.log(question + 'here');
     for (var i = 0; i < questions.length; i++) {
       if (questions[i].q == question) {
         questions[i].vote = questions[i].vote + 1;
       }
     }
+
+    var copy = questions.slice();
+    for (var i = 0; i < questions.length; i++) {
+      var current_low_index = 0;
+      for (var j = 0; j < copy.length; j++) {
+        var q = copy[j];
+        if (q.vote <= copy[current_low_index].vote) {
+          current_low_index = j;
+        }
+      }
+      sorted_questions[i] = copy[current_low_index];
+      copy.splice(current_low_index,1);
+    }
+
+    update_questions();
   });
 
 });
