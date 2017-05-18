@@ -79,8 +79,9 @@ io.on('connection', function(socket) {
   // when a socket connects, look for what room it's in
   socket.on('initialize', function(room){
     Room.upToSpeed(room.user_type, room.room_identifier, function(err, new_room){
-      if (err) console.log(err);
-      else {
+      if (err) {
+        console.log(err);
+      } else {
         room_id = new_room._id;
 	console.log("New connection to room: " + new_room.name);
 	socket.emit('initialize', {
@@ -93,11 +94,13 @@ io.on('connection', function(socket) {
   
   socket.on('confused', function() {
     Room.findById(room_id, function(err, room){
-      if (err) console.log(err)
-      else {
+      if (err) {
+        console.log(err);
+      } else {
         room.updateConfusion(1, function (err){
-	  if (err) console.log(err);
-	  else {
+	  if (err) {
+            console.log(err);
+	  } else {
             io.emit('update_confused', 1);
 	    confused = true;
 	  }
@@ -108,11 +111,13 @@ io.on('connection', function(socket) {
 
   socket.on('not_confused', function() {
    Room.findById(room_id, function(err, room){
-      if (err) console.log(err)
-      else {
+      if (err) {
+        console.log(err);
+      } else {
         room.updateConfusion(-1, function (err){
-	  if (err) console.log(err);
-	  else {
+	  if (err) {
+            console.log(err);
+	  } else {
             io.emit('update_confused', -1);
 	    confused = false;
 	  }
@@ -130,7 +135,7 @@ io.on('connection', function(socket) {
       else {
 	// TODO: we should trim whitespace off the ends of questions
         question = question.trim();
-        if (question == "") return;
+        if (question == "") { return; }
         var standardize = data.replace(/\r\n/gi, "\n");
         var filterWords = standardize.split(/\n/);
         // "i" is to ignore case and "g" for global
@@ -140,12 +145,16 @@ io.on('connection', function(socket) {
         }
         if (!WordFilter(question).includes("****")) {
 	       Room.findById(room_id, function(err, room){
-                 if (err) console.log(err);  
-	         else {
+                 if (err) {
+	           console.log(err);
+		 } else {
 		   room.questions.push({q : question, vote : 0});
                    room.save(function(err){
-    	             if (err) console.log(err);
-		     else io.emit('new question', {q : question, vote : 0});
+    	             if (err) { 
+		       console.log(err);
+		     } else {
+		       io.emit('new question', {q : question, vote : 0});
+		     }
 		   });
 		 }
 	       });
@@ -157,16 +166,18 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function() {
     if (confused){
       Room.findById(room_id, function(err, room){
-        if (err) console.log(err)
-        else {
+        if (err) {
+	  console.log(err);
+	} else {
           room.updateConfusion(-1, function (err){
-	         if (err) console.log(err);
-           else {
-              io.emit('update_confused', -1);
-              confused = false;
+	         if (err) {
+	           console.log(err);
+		 } else {
+                   io.emit('update_confused', -1);
+                   confused = false;
 	         }
-         });
-	     }
+	  });
+	}
       }); 
     }
   });
@@ -176,12 +187,14 @@ io.on('connection', function(socket) {
       return;
     }
     Room.findById(room_id, function(err, room) {
-      if (err) console.log(err);
-      else {
+      if (err) {
+        console.log(err);
+      } else {
         console.log(question);
         room.updateQuestion(question, function (err){
-          if (err) console.log(err);
-          else {
+          if (err) {
+            console.log(err);
+	  } else {
             if (question !== null) {
               io.emit('upvote_question', question);
               console.log(question);
