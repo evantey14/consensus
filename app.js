@@ -140,13 +140,15 @@ io.on('connection', function(socket) {
         }
         if (!WordFilter(question).includes("****")) {
 	       Room.findById(room_id, function(err, room){
-          if (err) console.log(err);  
-	        room.questions.push({q : question, vote : 0});
-          room.save(function(err){
-    	      if (err) console.log(err);
-    	      io.emit('new question', {q : question, vote : 0});
-    	    });
-    	  });
+                 if (err) console.log(err);  
+	         else {
+		   room.questions.push({q : question, vote : 0});
+                   room.save(function(err){
+    	             if (err) console.log(err);
+		     else io.emit('new question', {q : question, vote : 0});
+		   });
+		 }
+	       });
     	}
       }
     });
