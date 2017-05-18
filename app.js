@@ -18,7 +18,7 @@ app.io = io;
 
 var mongoose = require('mongoose');
 mongoose.set('debug', true);
-var DB_URI = process.env.CONS_URI || 'mongodb://localhost:27017/consensus';
+var DB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/consensus';
 
 console.log(DB_URI);
 
