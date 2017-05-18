@@ -75,22 +75,28 @@ app.use(function(err, req, res, next) {
 io.on('connection', function(socket) {
   var room_id; // database id of the connection's room
   var confused = false; // whether or not this connection is confused
-  
+  var isAdmin = false;
+
   // when a socket connects, look for what room it's in
   socket.on('initialize', function(room){
     Room.upToSpeed(room.user_type, room.room_identifier, function(err, new_room){
       if (err) console.log(err);
       else {
+        //If the admin correctly gets a room, then give him info
+        if(room.user_type = "admin"){
+          isAdmin = true;
+        }
+
         room_id = new_room._id;
-	console.log("New connection to room: " + new_room.name);
-	socket.emit('initialize', {
-	  questions: new_room.questions, 
-	  num_confused: new_room.confusion[new_room.confusion.length-1].conf_number
-	});
+	      console.log("New connection to room: " + new_room.name);
+    	  socket.emit('initialize', {
+    	    questions: new_room.questions,
+    	    num_confused: new_room.confusion[new_room.confusion.length-1].conf_number
+    	  });
       }
     });
   });
-  
+
   socket.on('confused', function() {
     Room.findById(room_id, function(err, room){
       if (err) console.log(err)
@@ -139,7 +145,7 @@ io.on('connection', function(socket) {
         }
         if (!WordFilter(question).includes("****")) {
 	       Room.findById(room_id, function(err, room){
-          if (err) console.log(err);  
+          if (err) console.log(err);
 	        room.questions.push({q : question, vote : 0});
           room.save(function(err){
     	      if (err) console.log(err);
@@ -150,7 +156,7 @@ io.on('connection', function(socket) {
       }
     });
   });
- 
+
   socket.on('disconnect', function() {
     if (confused){
       Room.findById(room_id, function(err, room){
@@ -164,7 +170,7 @@ io.on('connection', function(socket) {
 	         }
          });
 	     }
-      }); 
+      });
     }
   });
 
