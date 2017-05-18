@@ -2,8 +2,8 @@ $(document).ready(function(){
   adj = ["creative", "learning", "quirky", "funky", "cheesy", "extreme",
          "radical", "perky", "pretty", "binary", "hazmat", "doctor",
          "barefoot", "bashful", "colorful", "other", "new", "good", "old", "little",
-         "great", "small", "young", "long", "high", "military", "bad", "social",
-         "dead", "true", "economic", "open", "early", "free", "national", "strong"];
+         "great", "small", "young", "long", "high", "military", "social",
+         "true", "economic", "open", "early", "free", "national", "strong"];
   sub = ["math", "physics", "pe", "biology", "chemistry", "music", "english",
          "health", "calculus", "french", "spanish"];
 
