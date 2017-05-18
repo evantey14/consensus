@@ -18,7 +18,7 @@ app.io = io;
 
 var mongoose = require('mongoose');
 mongoose.set('debug', true);
-var DB_URI = process.env.CONS_URI || 'mongodb://localhost:27017/consensus';
+var DB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/consensus';
 
 console.log(DB_URI);
 
@@ -86,7 +86,6 @@ io.on('connection', function(socket) {
         if(room.user_type = "admin"){
           isAdmin = true;
         }
-
         room_id = new_room._id;
 	      console.log("New connection to room: " + new_room.name);
     	  socket.emit('initialize', {
@@ -99,11 +98,13 @@ io.on('connection', function(socket) {
 
   socket.on('confused', function() {
     Room.findById(room_id, function(err, room){
-      if (err) console.log(err)
-      else {
+      if (err) {
+        console.log(err);
+      } else {
         room.updateConfusion(1, function (err){
-	  if (err) console.log(err);
-	  else {
+	  if (err) {
+            console.log(err);
+	  } else {
             io.emit('update_confused', 1);
 	    confused = true;
 	  }
@@ -114,11 +115,13 @@ io.on('connection', function(socket) {
 
   socket.on('not_confused', function() {
    Room.findById(room_id, function(err, room){
-      if (err) console.log(err)
-      else {
+      if (err) {
+        console.log(err);
+      } else {
         room.updateConfusion(-1, function (err){
-	  if (err) console.log(err);
-	  else {
+	  if (err) {
+            console.log(err);
+	  } else {
             io.emit('update_confused', -1);
 	    confused = false;
 	  }
@@ -136,6 +139,7 @@ io.on('connection', function(socket) {
       else {
 	// TODO: we should trim whitespace off the ends of questions
         question = question.trim();
+        if (question == "") { return; }
         var standardize = data.replace(/\r\n/gi, "\n");
         var filterWords = standardize.split(/\n/);
         // "i" is to ignore case and "g" for global
@@ -144,15 +148,21 @@ io.on('connection', function(socket) {
           return str.replace(rgx, "****");
         }
         if (!WordFilter(question).includes("****")) {
-	       Room.findById(room_id, function(err, room){
-          if (err) console.log(err);
-	        room.questions.push({q : question, vote : 0});
-          room.save(function(err){
-    	      if (err) console.log(err);
-    	      io.emit('new question', {q : question, vote : 0});
-    	    });
-    	  });
-    	}
+	        Room.findById(room_id, function(err, room){
+            if (err) {
+	            console.log(err);
+		        } else {
+		          room.questions.push({q : question, vote : 0});
+              room.save(function(err){
+    	          if (err) {
+		              console.log(err);
+		            } else {
+		              io.emit('new question', {q : question, vote : 0});
+		            }
+		         });
+		       }
+	       });
+    	  }
       }
     });
   });
@@ -160,14 +170,16 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function() {
     if (confused){
       Room.findById(room_id, function(err, room){
-        if (err) console.log(err)
-        else {
+        if (err) {
+	        console.log(err);
+      	} else {
           room.updateConfusion(-1, function (err){
-	         if (err) console.log(err);
-           else {
+  	        if (err) {
+  	          console.log(err);
+            } else {
               io.emit('update_confused', -1);
               confused = false;
-	         }
+  	        }
          });
 	     }
       });
@@ -179,12 +191,14 @@ io.on('connection', function(socket) {
       return;
     }
     Room.findById(room_id, function(err, room) {
-      if (err) console.log(err);
-      else {
+      if (err) {
+        console.log(err);
+      } else {
         console.log(question);
         room.updateQuestion(question, function (err){
-          if (err) console.log(err);
-          else {
+          if (err) {
+            console.log(err);
+	  } else {
             if (question !== null) {
               io.emit('upvote_question', question);
               console.log(question);

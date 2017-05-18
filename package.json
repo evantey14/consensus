@@ -6,6 +6,9 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www"
   },
+  "engines": {
+    "node": "6.10.3"
+  },
   "dependencies": {
     "aws-sdk": "^2.2.29",
     "bcrypt-nodejs": "*",

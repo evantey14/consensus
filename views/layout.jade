@@ -10,15 +10,8 @@ html
     title Consensus
     
 body
-  .ui.secondary.fixed.menu
-    a.item(href='/mockup/') Home
-    .right.menu
-      a.item(href='/mockup/admin')
-        | Admin
-      a.item(href='/mockup/student')
-        | Student
-      a.item(href='/mockup/stats')
-        | End-Statistics
-        
-  section.ui.container
-      block content
+  .pusher   
+    .ui.top.fixed.menu.transition.hidden.small
+      a.item(href='/') Home
+    section.ui
+        block content
