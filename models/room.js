@@ -4,8 +4,9 @@ var roomSchema = mongoose.Schema({
   name           : { type : String},
   admin_url      : { type : String, unique: true},
   questions      : [{
-      q : {type : String},
-      vote: {type : Number}
+      q        : {type : String},
+      vote     : {type : Number},
+      resolved : {type: Boolean}
   }],
   confusion      : [{
       conf_number : { type: Number, required: true},
@@ -20,7 +21,7 @@ roomSchema.statics.createRoom = function(name, cb){
     admin_url : Math.random().toString(36).slice(12), //12 so easier to use for testing. decrease for production
     questions : [],
     confusion : [{conf_number: 0, timestamp: Date.now()}],
-    active    : true 
+    active    : true
   });
 
   this.findOne({name: name}, function(existing_room){
@@ -78,6 +79,17 @@ roomSchema.methods.updateQuestion = function(question, cb) {
     }
   }
   this.save(cb);
+}
+
+roomSchema.methods.resolveQuestion = function(question, cb){
+  console.log("RESOLVING QUESTION");
+  for( var i = 0; i < this.questions.length; i++){
+    if(!this.questions[i].resolved && this.questions[i].q == question){
+      console.log(this.questions[i]);
+      console.log("SUCCESSFUL")
+      this.questions[i].resolved = true;
+    }
+  }
 }
 
 module.exports = mongoose.model('Room', roomSchema);
