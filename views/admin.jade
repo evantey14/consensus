@@ -1,66 +1,69 @@
 extends layout
 
 block content
-  .ui.grid
-    .row
-      .ten.wide.column
-        h1.ui.large.header
-          |session name
-      .six.wide.column
-        a#close-session(style="float: right;") close session
-        a#session-links(style="float: right; margin-right: 10px;") session links
-    .sixteen.wide.column(style="margin-bottom: 10px")
-      h2.ui.small.header
-        |confusion graph
-      p#graph
-    .eight.wide.column
-      h2.ui.small.header
-        |top asks
-      .questions
-        p.question same?
-    .eight.wide.column
-      h2.ui.small.header
-        |recent asks
-      .questions
-        p.question#question-1 wow?
-        
-  .ui.basic.modal#question-modal(style="min-width: 350px; width: 30%; margin-left: -200px;")
-    .header#question-in-modal(style="padding-left:0; border:none;")
-      | question
-    .description(style="font-style:italics; border:none;")
-      | lookee a question
-    .actions(style="border:none;")
-      .ui.button.green.inverted.ok
-        | resolve
-      .ui.button.basic.cancel.inverted.red
-        | close
-  
-  .ui.modal.basic.small#session-links-modal(style="min-width: 350px; width: 30%; margin-left: -200px;")
-    .header(style="border:none;")
-      | session {name} links
-    .description(style="border:none;padding: 0 2rem 1rem;")
-      .ui.action.input(style="margin-bottom: 1rem;")
-        input(type="text" value="student link" disabled style="opacity:.8")
-        button.ui.teal.button
-          | copy
-      .ui.action.input
-        input(type="text" value="admin link" disabled style="opacity:.8")
-        button.ui.teal.button
-          | copy
-    .actions(style="border:none;")
-      .ui.button.red.deny.basic.inverted
-        | close
+  .ui.secondary.fixed.menu
+    a.item(href='/') Home
+  section.ui.container
+    .ui.grid
+      .row
+        .ten.wide.column
+          h1.ui.large.header
+            |session name
+        .six.wide.column
+          a#close-session(style="float: right;") close session
+          a#session-links(style="float: right; margin-right: 10px;") session links
+      .sixteen.wide.column(style="margin-bottom: 10px")
+        h2.ui.small.header
+          |confusion graph
+        p#graph
+      .eight.wide.column
+        h2.ui.small.header
+          |top asks
+        .questions
+          p.question same?
+      .eight.wide.column
+        h2.ui.small.header
+          |recent asks
+        .questions
+          p.question#question-1 wow?
+          
+    .ui.basic.modal#question-modal(style="min-width: 350px; width: 30%; margin-left: -200px;")
+      .header#question-in-modal(style="padding-left:0; border:none;")
+        | question
+      .description(style="font-style:italics; border:none;")
+        | lookee a question
+      .actions(style="border:none;")
+        .ui.button.green.inverted.ok
+          | resolve
+        .ui.button.basic.cancel.inverted.red
+          | close
     
-  .ui.modal.basic.small#close-session-modal
-    .header(style="border:none;text-align:center;")
-      | close session
-    .description(style="border:none;padding: 0 2rem 1rem;text-align:center;")
-      | are you sure you want to close the session?
-    .actions(style="border:none;text-align:center;")
-      .ui.button.green.positive
-        | yes
-      .ui.button.red.deny
-        | no
+    .ui.modal.basic.small#session-links-modal(style="min-width: 350px; width: 30%; margin-left: -200px;")
+      .header(style="border:none;")
+        | session {name} links
+      .description(style="border:none;padding: 0 2rem 1rem;")
+        .ui.action.input(style="margin-bottom: 1rem;")
+          input(type="text" value="student link" disabled style="opacity:.8")
+          button.ui.teal.button
+            | copy
+        .ui.action.input
+          input(type="text" value="admin link" disabled style="opacity:.8")
+          button.ui.teal.button
+            | copy
+      .actions(style="border:none;")
+        .ui.button.red.deny.basic.inverted
+          | close
+      
+    .ui.modal.basic.small#close-session-modal
+      .header(style="border:none;text-align:center;")
+        | close session
+      .description(style="border:none;padding: 0 2rem 1rem;text-align:center;")
+        | are you sure you want to close the session?
+      .actions(style="border:none;text-align:center;")
+        .ui.button.green.positive
+          | yes
+        .ui.button.red.deny
+          | no
 
   script(src="/javascripts/admin.js")
   script(src="https://cdn.socket.io/socket.io-1.7.3.js")
