@@ -68,6 +68,10 @@ $(document).ready(function(){
   var $question = $('#the-question');
 
   $questionform = $submitquestion.click(function(e) {
+    if(!$question.val()) {
+      alert("Type a question!");
+      return;
+    }
     socket.emit('question', $question.val());
     $question.val(' ');
     return false;
