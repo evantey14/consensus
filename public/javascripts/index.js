@@ -18,13 +18,15 @@ $(document).ready(function(){
     }
     $.post("/create", {name: name})
       .done(function(resp){
-      if (!resp) return alert("Choose another name!");
-      else {
-        $("#create-header").text(name + " has been created");
-        $("#student-link").attr('href', "/room/" + resp.student_url);
-        $("#admin-link").attr('href', "/admin/" + resp.admin_url);
-        $("#create-modal").modal('show');
-      }
+        if (!resp){
+          return alert("Choose another name!");
+        }
+        else {
+          $("#create-header").text(name + " has been created");
+          $("#student-link").attr('href', "/room/" + resp.student_url);
+          $("#admin-link").attr('href', "/admin/" + resp.admin_url);
+          $("#create-modal").modal('show');
+        }
     })
      .fail(function(){
        alert("Choose another name!");

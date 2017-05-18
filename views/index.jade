@@ -11,8 +11,8 @@ block content
       form.ui.form
         .field
           input.ui.input#room-name(placeholder = "Give your room a name, or let us choose one")
-        br
-        button.ui.button.huge.primary#home-button Begin your class
+      br
+      button.ui.button.huge.primary#home-button Begin your class
         
   .ui.vertical.stripe.segment(style="padding: 8em 0;")
     .ui.stackable.grid.container
@@ -56,6 +56,7 @@ block content
         p Made by Matt Johnston, Kelvin Lu, Hoang Nguyen, Jessica Tang, Evan Tey
       
   .ui.modal#create-modal
+    i.close.icon
     .content
       h2.medium.centered.header.ui#create-header
           | Your room has been created
