@@ -7,6 +7,8 @@ $(document).ready(function(){
   var $notconfused = $('#not-confused');
   var $askbutton = $('#show-ask-options');
   var $closeask = $('#close-ask-options');
+  var $submitquestion = $('#ask-question');
+  var $question = $('#the-question');
 
   var top_quest = false;
 
@@ -63,9 +65,6 @@ $(document).ready(function(){
     $("#confusion-help").hide();
     $("#confusion-info").hide();
   });
-
-  var $submitquestion = $('#ask-question');
-  var $question = $('#the-question');
 
   $questionform = $submitquestion.click(function(e) {
     if(!$question.val()) {
@@ -174,6 +173,8 @@ $(document).ready(function(){
 
   $('.ui.modal').modal({blurring:true});
 
+  // START QUESTION LOGIC
+
   $('.question').click(function(el){
     var q = $(this).text();
     var v = 0;
@@ -212,7 +213,14 @@ $(document).ready(function(){
       sorted_questions[i] = copy[current_low_index];
       copy.splice(current_low_index,1);
     }
+    update_questions();
+  });
 
+  socket.on('resolve', function(question){
+    console.log('RESOVLED QUESTION: ' + question)
+    if(~questions.indexOf(question)){
+      questions.splice(questions.indexOf(question), 1);
+    }
     update_questions();
   });
 

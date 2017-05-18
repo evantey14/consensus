@@ -90,6 +90,7 @@ roomSchema.methods.resolveQuestion = function(question, cb){
       this.questions[i].resolved = true;
     }
   }
+  this.save(cb);
 }
 
 module.exports = mongoose.model('Room', roomSchema);

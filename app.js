@@ -75,23 +75,27 @@ app.use(function(err, req, res, next) {
 io.on('connection', function(socket) {
   var room_id; // database id of the connection's room
   var confused = false; // whether or not this connection is confused
-  
+  var isAdmin = false;
+
   // when a socket connects, look for what room it's in
   socket.on('initialize', function(room){
     Room.upToSpeed(room.user_type, room.room_identifier, function(err, new_room){
-      if (err) {
-        console.log(err);
-      } else {
+      if (err) console.log(err);
+      else {
+        //If the admin correctly gets a room, then give him info
+        if(room.user_type = "admin"){
+          isAdmin = true;
+        }
         room_id = new_room._id;
-	console.log("New connection to room: " + new_room.name);
-	socket.emit('initialize', {
-	  questions: new_room.questions, 
-	  num_confused: new_room.confusion[new_room.confusion.length-1].conf_number
-	});
+	      console.log("New connection to room: " + new_room.name);
+    	  socket.emit('initialize', {
+    	    questions: new_room.questions,
+    	    num_confused: new_room.confusion[new_room.confusion.length-1].conf_number
+    	  });
       }
     });
   });
-  
+
   socket.on('confused', function() {
     Room.findById(room_id, function(err, room){
       if (err) {
@@ -110,18 +114,18 @@ io.on('connection', function(socket) {
   });
 
   socket.on('not_confused', function() {
-   Room.findById(room_id, function(err, room){
+    Room.findById(room_id, function(err, room){
       if (err) {
         console.log(err);
       } else {
         room.updateConfusion(-1, function (err){
-	  if (err) {
+	        if (err) {
             console.log(err);
-	  } else {
+	        } else {
             io.emit('update_confused', -1);
-	    confused = false;
-	  }
-	});
+	          confused = false;
+	    }
+	      });
       }
     });
   });
@@ -133,7 +137,7 @@ io.on('connection', function(socket) {
         console.log('error');
       }
       else {
-	// TODO: we should trim whitespace off the ends of questions
+	    // TODO: we should trim whitespace off the ends of questions
         question = question.trim();
         if (question == "") { return; }
         var standardize = data.replace(/\r\n/gi, "\n");
@@ -144,41 +148,66 @@ io.on('connection', function(socket) {
           return str.replace(rgx, "****");
         }
         if (!WordFilter(question).includes("****")) {
-	       Room.findById(room_id, function(err, room){
-                 if (err) {
-	           console.log(err);
-		 } else {
-		   room.questions.push({q : question, vote : 0});
-                   room.save(function(err){
-    	             if (err) { 
-		       console.log(err);
-		     } else {
-		       io.emit('new question', {q : question, vote : 0});
-		     }
-		   });
-		 }
+	        Room.findById(room_id, function(err, room){
+            if (err) {
+	            console.log(err);
+		        } else {
+		          room.questions.push({q : question, vote : 0});
+              room.save(function(err){
+    	          if (err) {
+		              console.log(err);
+		            } else {
+		              io.emit('new question', {q : question, vote : 0});
+		            }
+		         });
+		       }
 	       });
-    	}
+    	  }
       }
     });
   });
- 
+
+  socket.on('resolve', function(question){
+    if(!isAdmin){
+      console.log("RESOLVE FAILED ON " + question + " - NO PERMISSION");
+      return;
+    }
+
+    Room.findById(room_id, function(err, room){
+      if (err) {
+        console.log("RESOLVE FAILED ON " + question);
+        console.log(err);
+      } else {
+        room.resolveQuestion(question, function(err){
+          if (err) {
+            console.log("RESOLVE FAILED ON " + question);
+            console.log(err);
+          } else {
+            console.log("FINISH RESOLVE ON " + question);
+            io.emit('resolve', question);
+          }
+        });
+      }
+
+    })
+  });
+
   socket.on('disconnect', function() {
     if (confused){
       Room.findById(room_id, function(err, room){
         if (err) {
-	  console.log(err);
-	} else {
+	        console.log(err);
+      	} else {
           room.updateConfusion(-1, function (err){
-	         if (err) {
-	           console.log(err);
-		 } else {
-                   io.emit('update_confused', -1);
-                   confused = false;
-	         }
-	  });
-	}
-      }); 
+  	        if (err) {
+  	          console.log(err);
+            } else {
+              io.emit('update_confused', -1);
+              confused = false;
+  	        }
+         });
+	     }
+      });
     }
   });
 
