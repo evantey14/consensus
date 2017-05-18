@@ -29,6 +29,7 @@ $(document).ready(function(){
      .fail(function(){
        alert("Choose another name!");
      });
+
     // TODO: in we're generating a name, we should keep trying until it works (some code for this can be found below)
     /*if(chosen){
       $.post("/create", {name: name}, function(resp){
@@ -53,6 +54,14 @@ $(document).ready(function(){
           });
       }
     }*/
+  });
+
+  $("#room-name").on('keyup', function(e){
+    if (e.keyCode == 13){
+      $("#home-button").click();
+      e.preventDefault();
+      return false;
+    }
   });
 
   generateName = function(){

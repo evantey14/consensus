@@ -9,8 +9,8 @@ html
     script(src='/javascripts/semantic.min.js')
     
 body
-  .ui.secondary.fixed.menu
-    a.item(href='/') Home
-        
-  section.ui.container
-      block content
+  .pusher   
+    .ui.top.fixed.menu.transition.hidden.small
+      a.item(href='/') Home
+    section.ui
+        block content
