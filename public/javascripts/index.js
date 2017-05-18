@@ -58,11 +58,10 @@ $(document).ready(function(){
     }*/
   });
 
-  $("#room-name").on('keyup', function(e){
+  $("#room-name").keypress(function(e){
     if (e.keyCode == 13){
       $("#home-button").click();
       e.preventDefault();
-      return false;
     }
   });
 
