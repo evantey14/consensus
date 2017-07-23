@@ -25,7 +25,6 @@ console.log(DB_URI);
 db = mongoose.connect(DB_URI);
 console.log('connected to DB');
 
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -77,21 +76,23 @@ io.on('connection', function(socket) {
   var confused = false; // whether or not this connection is confused
   var isAdmin = false;
 
-  // when a socket connects, look for what room it's in
+  // when a socket connects, get room_id and isAdmin status 
   socket.on('initialize', function(room){
-    Room.upToSpeed(room.user_type, room.room_identifier, function(err, new_room){
-      if (err) console.log(err);
-      else {
-        //If the admin correctly gets a room, then give him info
-        if(room.user_type = "admin"){
+    var query = {};
+    if (room.user_type === "admin") {
+      query = {admin_url: room.room_identifier, active: true};
+    } else if (room.user_type === "student") {
+      query = {name: room.room_identifier, active: true};
+    }
+    Room.findOne(query, function(err, room){
+      if (err) {
+        console.log(err);
+      } else {
+        if (room.user_type === "admin") {
           isAdmin = true;
         }
-        room_id = new_room._id;
-	      console.log("New connection to room: " + new_room.name);
-    	  socket.emit('initialize', {
-    	    questions: new_room.questions,
-    	    num_confused: new_room.confusion[new_room.confusion.length-1].conf_number
-    	  });
+        room_id = room._id;
+        console.log("new connection to room: " + room.name + "(" + room_id + ")");
       }
     });
   });

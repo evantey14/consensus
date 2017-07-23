@@ -25,7 +25,6 @@ router.post('/create', function(req, res, next){
 });
 
 router.get('/room/:roomName', function(req, res, next){
-  // TODO: Should this be integrated with the "initialize" socket handler?
   Room.upToSpeed("room", req.params.roomName, function(err, room){
     if(!room){
       res.render("no-room");
