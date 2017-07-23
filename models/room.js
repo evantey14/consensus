@@ -23,20 +23,22 @@ roomSchema.statics.createRoom = function(name, cb){
     confusion : [{conf_number: 0, timestamp: Date.now()}],
     active    : true
   });
-
+  
   this.findOne({name: name}, function(existing_room){
     if(existing_room){
       //Same room found with same name, don't make the room
       cb(null, null);
     } else {
-      console.log("NEW ROOM CREATION: " + name);
-      console.log("ADMIN URL FOR " + name + ": " + room.admin_url);
       room.save(function(err){
         if(err){
+          console.log("failed to save room: " + room.name);
           cb(err, null);
         } else {
-	  cb(null, room);
-	}
+          console.log("new room: " + name);
+          console.log(name + ": admin url -- /admin/" + room.admin_url);
+          console.log(name + ": student url -- /room/" + room.name);
+          cb(null, room);
+	    }
       });
     }
   });

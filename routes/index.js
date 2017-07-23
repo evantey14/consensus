@@ -9,7 +9,6 @@ router.get('/', function(req, res, next){
 router.post('/create', function(req, res, next){
   var name = req.body.name;
 
-  console.log("ATTEMPT CREATE: " + name);
   var safeURL = new RegExp("^[-A-Za-z0-9\.\!\(\)]+$");
   if(!name || !safeURL.test(name)) return res.sendStatus(403); //don't let them enter a bad url
 
@@ -17,7 +16,6 @@ router.post('/create', function(req, res, next){
     if (err) console.log(err);
     else if (!room) return res.sendStatus(403); // if room already exists, send null
     else {
-      console.log("CREATED");
       return res.json({
         student_url: room.name,
 	      admin_url: room.admin_url
