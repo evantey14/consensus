@@ -15,7 +15,6 @@ $(document).ready(function(){
   $("#confusion-info").hide();
   $("#the-asks").hide();
 
-  // this sends the last section of the url to the server
   socket.emit('initialize', {
     user_type: "student",
     room_identifier: window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1)
@@ -25,27 +24,14 @@ $(document).ready(function(){
     questions = room.questions;
     num_confused = room.num_confused;
 
-    var copy = questions.slice();
-    for (var i = 0; i < questions.length; i++) {
-      var current_low_index = 0;
-      for (var j = 0; j < copy.length; j++) {
-        var q = copy[j];
-        if (q.vote <= copy[current_low_index].vote) {
-          current_low_index = j;
-        }
-      }
-      sorted_questions[i] = copy[current_low_index];
-      copy.splice(current_low_index,1);
-    }
-
     update_questions();
     update_confused();
   });
 
   // TODO: we should keep some state variable so people can't repeatedly click 'confused' and send more messages
+  // confusion handling
   $confused.click(function() {
     socket.emit('update_confused', 1);
-
     $("#confused").hide();
     $("#not-confused").toggleClass("toggled");
     $("#confusion-help").show();
@@ -56,46 +42,14 @@ $(document).ready(function(){
 
   $notconfused.click(function() {
     socket.emit('update_confused', -1);
-
     $("#confused").show();
     $("#not-confused").toggleClass("toggled");
     $("#confusion-help").hide();
     $("#confusion-info").hide();
   });
 
-  $questionform = $submitquestion.click(function(e) {
-    if(!$question.val()) {
-      alert("Type a question!");
-      return;
-    }
-    socket.emit('question', $question.val());
-    $question.val(' ');
-    return false;
-  });
-
-  socket.on('new question', function(q) {
-    questions.push(q);
-
-    for (var i = 0; i < sorted_questions.length; i++) {
-      if (q.vote <= sorted_questions[i].vote) {
-        sorted_questions = sorted_questions.slice(0,i).concat([q], sorted_questions.slice(i));
-        break;
-      }
-      if (i == sorted_questions.length-1) {
-        sorted_questions.push(q);
-        break;
-      }
-    }
-    if (sorted_questions.length == 0) {
-      sorted_questions = [q];
-    }
-
-    update_questions();
-  });
-
-  socket.on('update_confused', function(change){
-    console.log("Confusion change");
-    num_confused += change;
+  socket.on('update_confused', function(delta){
+    num_confused += delta;
     update_confused();
   });
 
@@ -109,7 +63,25 @@ $(document).ready(function(){
     }
   }
 
+  // question handling
+  $submitquestion.click(function(e) {
+    if(!$question.val()) {
+      alert("Type a question!");
+    }
+    socket.emit('question', $question.val());
+    $question.val('');
+  });
+
+  socket.on('new question', function(q) {
+    questions.push(q);
+    update_questions();
+  });
+
   update_questions = function(){
+    sorted_questions = questions.slice().sort(function(a, b) {
+      return a.vote > b.vote;
+    });
+      
     for(var i = 0; i < sorted_questions.length; i++){
       if (i < 3){
         var index = i+1;
@@ -129,7 +101,7 @@ $(document).ready(function(){
         $("#rquestion-" + index + ".question").text(q);
       }
     }
-  };
+  }
 
   // front end functionality
   $askbutton.click(function(){
@@ -194,21 +166,9 @@ $(document).ready(function(){
   socket.on('upvote_question', function(question) {
     for (var i = 0; i < questions.length; i++) {
       if (questions[i].q == question) {
-        questions[i].vote = questions[i].vote + 1;
+        questions[i].vote++;
+        break;
       }
-    }
-
-    var copy = questions.slice();
-    for (var i = 0; i < questions.length; i++) {
-      var current_low_index = 0;
-      for (var j = 0; j < copy.length; j++) {
-        var q = copy[j];
-        if (q.vote <= copy[current_low_index].vote) {
-          current_low_index = j;
-        }
-      }
-      sorted_questions[i] = copy[current_low_index];
-      copy.splice(current_low_index,1);
     }
     update_questions();
   });
