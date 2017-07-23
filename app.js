@@ -93,6 +93,8 @@ io.on('connection', function(socket) {
         }
         room_id = room._id;
         console.log("new connection to room: " + room.name + "(" + room_id + ")");
+        socket.emit('initialize', {questions: room.questions, 
+          num_confused: room.confusion[room.confusion.length-1].conf_number});
       }
     });
   });
