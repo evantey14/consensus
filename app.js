@@ -97,36 +97,19 @@ io.on('connection', function(socket) {
     });
   });
 
-  socket.on('confused', function() {
+  socket.on('update_confused', function(delta) {
     Room.findById(room_id, function(err, room){
       if (err) {
         console.log(err);
       } else {
-        room.updateConfusion(1, function (err){
-	  if (err) {
+        room.updateConfusion(delta, function (err){
+	      if (err) {
             console.log(err);
-	  } else {
-            io.emit('update_confused', 1);
-	    confused = true;
-	  }
-	});
-      }
-    });
-  });
-
-  socket.on('not_confused', function() {
-    Room.findById(room_id, function(err, room){
-      if (err) {
-        console.log(err);
-      } else {
-        room.updateConfusion(-1, function (err){
-	        if (err) {
-            console.log(err);
-	        } else {
-            io.emit('update_confused', -1);
-	          confused = false;
-	    }
-	      });
+	      } else {
+            io.emit('update_confused', delta);
+            confused = (delta === 1) ? true : false;
+	      }
+	    });
       }
     });
   });

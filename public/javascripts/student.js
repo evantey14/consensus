@@ -10,8 +10,6 @@ $(document).ready(function(){
   var $submitquestion = $('#ask-question');
   var $question = $('#the-question');
 
-  var top_quest = false;
-
   var socket = io();
   $("#confusion-help").hide();
   $("#confusion-info").hide();
@@ -44,10 +42,9 @@ $(document).ready(function(){
     update_confused();
   });
 
-  // socket handlers
   // TODO: we should keep some state variable so people can't repeatedly click 'confused' and send more messages
   $confused.click(function() {
-    socket.emit('confused');
+    socket.emit('update_confused', 1);
 
     $("#confused").hide();
     $("#not-confused").toggleClass("toggled");
@@ -58,7 +55,7 @@ $(document).ready(function(){
   });
 
   $notconfused.click(function() {
-    socket.emit('not_confused');
+    socket.emit('update_confused', -1);
 
     $("#confused").show();
     $("#not-confused").toggleClass("toggled");
