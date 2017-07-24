@@ -109,7 +109,7 @@ io.on('connection', function(socket) {
             console.log(err);
 	      } else {
             io.emit('update_confused', delta);
-            confused = (delta === 1) ? true : false;
+            confused = (delta === 1) ? true : false; // delta takes value 1 or -1
 	      }
 	    });
       }
@@ -117,15 +117,15 @@ io.on('connection', function(socket) {
   });
 
   // When asks a question, create new question object in db, and send to all users
-  socket.on('question', function(question) {
+  socket.on('new_question', function(question) {
     fs.readFile("./badwords.txt", 'utf8', function read(err, data) {
       if (err) {
-        console.log('error');
-      }
-      else {
-	    // TODO: we should trim whitespace off the ends of questions
+        console.log(err);
+      } else {
         question = question.trim();
-        if (question == "") { return; }
+        if (question == "") { 
+          return; 
+        }
         var standardize = data.replace(/\r\n/gi, "\n");
         var filterWords = standardize.split(/\n/);
         // "i" is to ignore case and "g" for global
@@ -134,26 +134,49 @@ io.on('connection', function(socket) {
           return str.replace(rgx, "****");
         }
         if (!WordFilter(question).includes("****")) {
-	        Room.findById(room_id, function(err, room){
+	      Room.findById(room_id, function(err, room){
             if (err) {
-	            console.log(err);
-		        } else {
-		          room.questions.push({q : question, vote : 0});
+	          console.log(err);
+		    } else {
+		      room.questions.push({q : question, vote : 0});
               room.save(function(err){
-    	          if (err) {
-		              console.log(err);
-		            } else {
-		              io.emit('new question', {q : question, vote : 0});
-		            }
-		         });
-		       }
-	       });
-    	  }
+    	        if (err) {
+		          console.log(err);
+		        } else {
+		          io.emit('new_question', {q : question, vote : 0});
+		        }
+		      });
+		    }
+	      });
+    	}
       }
     });
   });
 
-  socket.on('resolve', function(question){
+  socket.on('upvote_question', function(question) {
+    if (question === null) {
+      return;
+    }
+    Room.findById(room_id, function(err, room) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(question);
+        room.updateQuestion(question, function (err){
+          if (err) {
+            console.log(err);
+	  } else {
+            if (question !== null) {
+              io.emit('upvote_question', question);
+              console.log(question);
+            }
+          }
+        });
+      }
+    });
+  });
+
+  socket.on('resolve_question', function(question){
     if(!isAdmin){
       console.log("RESOLVE FAILED ON " + question + " - NO PERMISSION");
       return;
@@ -195,29 +218,6 @@ io.on('connection', function(socket) {
 	     }
       });
     }
-  });
-
-  socket.on('upvote', function(question) {
-    if (question === null) {
-      return;
-    }
-    Room.findById(room_id, function(err, room) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(question);
-        room.updateQuestion(question, function (err){
-          if (err) {
-            console.log(err);
-	  } else {
-            if (question !== null) {
-              io.emit('upvote_question', question);
-              console.log(question);
-            }
-          }
-        });
-      }
-    });
   });
 
 });
