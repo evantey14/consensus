@@ -73,11 +73,17 @@ roomSchema.methods.updateConfusion = function(change, cb){
   this.save(cb);
 };
 
-roomSchema.methods.updateQuestion = function(question, cb) {
+roomSchema.methods.newQuestion = function(question, cb) {
+  this.questions.push({q : question, vote : 0});
+  this.save(cb);  
+}
+
+roomSchema.methods.upvoteQuestion = function(question, cb) {
   allQuestions = this.questions;
   for (var i = 0; i < allQuestions.length; i++) {
     if (allQuestions[i].q == question) {
       allQuestions[i].vote = allQuestions[i].vote + 1;
+      break;
     }
   }
   this.save(cb);

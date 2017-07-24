@@ -138,8 +138,7 @@ io.on('connection', function(socket) {
             if (err) {
 	          console.log(err);
 		    } else {
-		      room.questions.push({q : question, vote : 0});
-              room.save(function(err){
+		      room.newQuestion(question, function(err) {
     	        if (err) {
 		          console.log(err);
 		        } else {
@@ -161,11 +160,10 @@ io.on('connection', function(socket) {
       if (err) {
         console.log(err);
       } else {
-        console.log(question);
-        room.updateQuestion(question, function (err){
+        room.upvoteQuestion(question, function (err){
           if (err) {
             console.log(err);
-	  } else {
+	      } else {
             if (question !== null) {
               io.emit('upvote_question', question);
               console.log(question);
