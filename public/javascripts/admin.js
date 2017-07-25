@@ -1,7 +1,8 @@
 $(document).ready(function(){
 
-  var questions = [];
   var num_confused = 0;
+  var questions = [];
+  var sorted_questions = [];
 
   var socket = io();
   socket.emit('initialize', {
@@ -12,25 +13,46 @@ $(document).ready(function(){
   socket.on('initialize', function(room){
     questions = room.questions;
     num_confused = room.num_confused;
+    //console.log(questions);
     update_questions();
-    update_confused();
+    //update_confused();
   });
 
   socket.on('new question', function(q) {
     questions.push(q);
-    console.log(questions);
     update_questions();
   });
 
-  socket.on('update_confused', function(change){
-    console.log("Confusion change");
-    num_confused += change;
+  socket.on('update_confused', function(delta){
+    num_confused += delta;
     update_confused();
   });
 
-  update_questions = function(){
-    // TODO: fill with appropriate behavior
-  }
+  var update_questions = function(){
+    sorted_questions = questions.slice().sort(function(a, b) {
+      return a.vote > b.vote;
+    });
+    console.log(sorted_questions); 
+    $('#recent-asks').empty();
+    $('#top-asks').empty();
+
+    for(var i = 1; i <= questions.length; i++) {
+      $('<p>', {'class': 'vote', 'id': 'rvote-' + i, 'style': 'font-style:italics; border:none; display:inline-block;'})
+        .text('+' + questions[questions.length - i].vote + '/')
+        .appendTo('#recent-asks');
+      $('<div>', {'class': 'question', 'id': 'rquestion-' + i, 'style': 'display:inline-block;'})
+        .text(questions[questions.length - i].q)
+        .appendTo('#recent-asks');
+      $('<p>').appendTo('#recent-asks'); // for spacing
+      $('<p>', {'class': 'vote', 'id': 'tvote-' + i, 'style': 'font-style:italics; border:none; display:inline-block;'})
+        .text('+' + sorted_questions[sorted_questions.length - i].vote + '/')
+        .appendTo('#top-asks');
+      $('<div>', {'class': 'question', 'id': 'tquestion-' + i, 'style': 'display:inline-block;'})
+        .text(sorted_questions[sorted_questions.length - i].q)
+        .appendTo('#top-asks');
+      $('<p>').appendTo('#top-asks');
+    }
+  };
 
   update_confused = function(){
     // TODO: fill with appropriate behavior
@@ -39,16 +61,6 @@ $(document).ready(function(){
   // front end functionality
   $("#button").click(function(){
     $("#show-later").show();
-  })
-
-  socket.on("update_confused", function(change){
-  	console.log("admin notified");
-
-  	data.push({x: 4, y: 17});
-
-  	graph.update();
-
-	graph.render();
   });
 
   $('.ui.modal').modal({blurring:true});
@@ -66,14 +78,4 @@ $(document).ready(function(){
     $('#close-session-modal.modal.ui').modal('show');
   })
 
-  update_questions = function(){
-    for(var i = 0; i < questions.length; i++){
-      if (i < 3){
-        var index = i+1;
-        $("#question-" + index).text("- " + questions[questions.length - 1 - i]);
-      }
-    }
-  };
-
-  update_questions();
 });
