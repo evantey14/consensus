@@ -17,7 +17,7 @@ $(document).ready(function(){
     update_confused();
   });
 
-  socket.on('new question', function(q) {
+  socket.on('new_question', function(q) {
     questions.push(q);
     update_questions();
   });
