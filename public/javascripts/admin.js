@@ -54,7 +54,7 @@ $(document).ready(function(){
   };
 
   update_confused = function(){
-    // TODO: fill with appropriate behavior
+    $('#graph').text(num_confused);
   };
 
   // front end functionality
