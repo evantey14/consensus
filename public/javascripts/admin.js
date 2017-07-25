@@ -10,12 +10,11 @@ $(document).ready(function(){
     room_identifier: window.location.pathname.substr(window.location.pathname.lastIndexOf("/")+1)
   });
 
-  socket.on('initialize', function(room){
+  socket.on('initialize', function(room) {
     questions = room.questions;
     num_confused = room.num_confused;
-    //console.log(questions);
     update_questions();
-    //update_confused();
+    update_confused();
   });
 
   socket.on('new question', function(q) {
@@ -23,12 +22,12 @@ $(document).ready(function(){
     update_questions();
   });
 
-  socket.on('update_confused', function(delta){
+  socket.on('update_confused', function(delta) {
     num_confused += delta;
     update_confused();
   });
 
-  var update_questions = function(){
+  var update_questions = function() {
     sorted_questions = questions.slice().sort(function(a, b) {
       return a.vote > b.vote;
     });
@@ -56,26 +55,27 @@ $(document).ready(function(){
 
   update_confused = function(){
     // TODO: fill with appropriate behavior
-  }
+  };
 
   // front end functionality
-  $("#button").click(function(){
+  $("#button").click(function() {
     $("#show-later").show();
   });
 
   $('.ui.modal').modal({blurring:true});
 
-  $('.question').click(function(el){
-    $("#question-in-modal").text($(this).text());
+  // using .on() to bind this handler to all future .question elements
+  $('.questions').on('click', '.question', function(el) {
+    $("question-modal-description").text($(this).text());
     $('#question-modal.modal.ui.basic').modal('show');
   });
 
-  $('#session-links').click(function(){
+  $('#session-links').click(function() {
     $('#session-links-modal.modal.ui').modal('show');
-  })
+  });
 
-  $('#close-session').click(function(){
+  $('#close-session').click(function() {
     $('#close-session-modal.modal.ui').modal('show');
-  })
+  });
 
 });
