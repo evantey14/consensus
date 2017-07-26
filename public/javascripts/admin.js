@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
   var num_confused = 0;
   var questions = [];
   var sorted_questions = [];
@@ -17,21 +16,27 @@ $(document).ready(function(){
     update_confused();
   });
 
-  socket.on('new_question', function(q) {
-    questions.push(q);
-    update_questions();
-  });
-
+  // confusion handling
   socket.on('update_confused', function(delta) {
     num_confused += delta;
     update_confused();
   });
 
-  var update_questions = function() {
+  update_confused = function(){
+    $('#graph').text(num_confused);
+  };
+
+  // question handling
+  socket.on('new_question', function(q) {
+    questions.push(q);
+    update_questions();
+  });
+
+  update_questions = function() {
     sorted_questions = questions.slice().sort(function(a, b) {
       return a.vote > b.vote;
     });
-    console.log(sorted_questions); 
+    
     $('#recent-asks').empty();
     $('#top-asks').empty();
 
@@ -43,6 +48,7 @@ $(document).ready(function(){
         .text(questions[questions.length - i].q)
         .appendTo('#recent-asks');
       $('<p>').appendTo('#recent-asks'); // for spacing
+      
       $('<p>', {'class': 'vote', 'id': 'tvote-' + i, 'style': 'font-style:italics; border:none; display:inline-block;'})
         .text('+' + sorted_questions[sorted_questions.length - i].vote + '/')
         .appendTo('#top-asks');
@@ -52,11 +58,7 @@ $(document).ready(function(){
       $('<p>').appendTo('#top-asks');
     }
   };
-
-  update_confused = function(){
-    $('#graph').text(num_confused);
-  };
-
+  
   // front end functionality
   $("#button").click(function() {
     $("#show-later").show();
