@@ -32,6 +32,16 @@ $(document).ready(function(){
     update_questions();
   });
 
+  socket.on('upvote_question', function(question) {
+    for (var i = 0; i < questions.length; i++) {
+      if (questions[i].q == question) {
+        questions[i].vote++;
+        break;
+      }
+    }
+    update_questions();
+  });
+
   update_questions = function() {
     sorted_questions = questions.slice().sort(function(a, b) {
       return a.vote > b.vote;
