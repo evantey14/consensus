@@ -78,7 +78,7 @@ $(document).ready(function(){
 
   // using .on() to bind this handler to all future .question elements
   $('.questions').on('click', '.question', function(el) {
-    $("question-modal-description").text($(this).text());
+    $('#question-modal-description').text($(this).text());
     $('#question-modal.modal.ui.basic').modal('show');
   });
 
