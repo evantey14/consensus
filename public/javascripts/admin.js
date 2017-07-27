@@ -44,9 +44,9 @@ $(document).ready(function(){
 
   update_questions = function() {
     sorted_questions = questions.slice().sort(function(a, b) {
-      return a.vote > b.vote;
+      return a.vote - b.vote;
     });
-    
+
     $('#recent-asks').empty();
     $('#top-asks').empty();
 

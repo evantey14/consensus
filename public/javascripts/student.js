@@ -100,7 +100,7 @@ $(document).ready(function(){
 
   update_questions = function(){
     sorted_questions = questions.slice().sort(function(a, b) {
-      return a.vote > b.vote;
+      return a.vote - b.vote;
     });
       
     for(var i = 0; i < sorted_questions.length; i++){
