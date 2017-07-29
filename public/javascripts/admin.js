@@ -42,6 +42,19 @@ $(document).ready(function(){
     update_questions();
   });
 
+  $('#resolve').click(function() {
+    socket.emit('resolve_question', $('#question-modal-description').text());
+  });
+
+  socket.on('resolve_question', function(question){
+    for(var i = 0; i < questions.length; i++) {
+      if(questions[i].q === question) {
+        questions.splice(i, 1);
+      }
+    }
+    update_questions();
+  });
+
   update_questions = function() {
     sorted_questions = questions.slice().sort(function(a, b) {
       return a.vote - b.vote;

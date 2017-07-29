@@ -74,7 +74,7 @@ roomSchema.methods.updateConfusion = function(change, cb){
 };
 
 roomSchema.methods.newQuestion = function(question, cb) {
-  this.questions.push({q : question, vote : 0});
+  this.questions.push({q : question, vote : 0, resolved : false});
   this.save(cb);  
 }
 
@@ -91,8 +91,8 @@ roomSchema.methods.upvoteQuestion = function(question, cb) {
 
 roomSchema.methods.resolveQuestion = function(question, cb){
   console.log("RESOLVING QUESTION");
-  for( var i = 0; i < this.questions.length; i++){
-    if(!this.questions[i].resolved && this.questions[i].q == question){
+  for(var i = 0; i < this.questions.length; i++) {
+    if(!this.questions[i].resolved && this.questions[i].q == question) {
       console.log(this.questions[i]);
       console.log("SUCCESSFUL")
       this.questions[i].resolved = true;

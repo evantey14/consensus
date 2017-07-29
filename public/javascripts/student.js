@@ -92,8 +92,10 @@ $(document).ready(function(){
 
   socket.on('resolve_question', function(question){
     console.log('RESOVLED QUESTION: ' + question)
-    if(~questions.indexOf(question)){
-      questions.splice(questions.indexOf(question), 1);
+    for(var i = 0; i < questions.length; i++) {
+      if(questions[i].q === question) {
+        questions.splice(i, 1);
+      }
     }
     update_questions();
   });

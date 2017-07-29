@@ -77,23 +77,23 @@ io.on('connection', function(socket) {
   var isAdmin = false;
 
   // when a socket connects, get room_id and isAdmin status 
-  socket.on('initialize', function(room){
+  socket.on('initialize', function(socket_info) {
     var query = {};
-    if (room.user_type === "admin") {
-      query = {admin_url: room.room_identifier, active: true};
-    } else if (room.user_type === "student") {
-      query = {name: room.room_identifier, active: true};
+    if (socket_info.user_type === "admin") {
+      query = {admin_url: socket_info.room_identifier, active: true};
+    } else if (socket_info.user_type === "student") {
+      query = {name: socket_info.room_identifier, active: true};
     }
-    Room.findOne(query, function(err, room){
+    Room.findOne(query, function(err, room) {
       if (err) {
         console.log(err);
       } else {
-        if (room.user_type === "admin") {
-          isAdmin = true;
+        if (socket_info.user_type === "admin") {
+            isAdmin = true;
         }
         room_id = room._id;
         console.log("new connection to room: " + room.name + "(" + room_id + ")");
-        socket.emit('initialize', {questions: room.questions, 
+        socket.emit('initialize', {questions: room.questions.filter(function(el) { return !el.resolved }), 
           num_confused: room.confusion[room.confusion.length-1].conf_number});
       }
     });
@@ -166,7 +166,6 @@ io.on('connection', function(socket) {
 	      } else {
             if (question !== null) {
               io.emit('upvote_question', question);
-              console.log(question);
             }
           }
         });
@@ -191,7 +190,7 @@ io.on('connection', function(socket) {
             console.log(err);
           } else {
             console.log("FINISH RESOLVE ON " + question);
-            io.emit('resolve', question);
+            io.emit('resolve_question', question);
           }
         });
       }
